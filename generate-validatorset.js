@@ -29,6 +29,7 @@ program.option("--mock <mock>",
 program.parse(process.argv);
 
 const validators = require("./validators")
+// console.log(validators,'validators---');
 let initValidatorSetBytes = program.initValidatorSetBytes;
 if (initValidatorSetBytes == ""){
   initValidatorSetBytes = validators.validatorSetBytes.slice(2);

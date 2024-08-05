@@ -6,7 +6,7 @@ const program = require("commander")
 program.option(
     "--network <network>",
     "network",
-    "mainnet"
+    "testnet"
 )
 
 program.parse(process.argv)

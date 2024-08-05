@@ -1,105 +1,105 @@
-const { spawn } = require('child_process');
-const program = require('commander');
-const nunjucks = require('nunjucks');
+const solc = require('solc');
 const fs = require('fs');
-const web3 = require('web3');
 const path = require('path');
+const nunjucks = require('nunjucks');
+const { Command } = require('commander');
+const web3 = require('web3');
+
+const program = new Command();
+program.option('-c, --chainid <chainid>', 'chain id, mainnet 1116 testnet 1115 devnet 1112', '1167');
+program.option('-o, --output <output-file>', 'Genesis json file', './genesis.json');
+program.option('-t, --template <template>', 'Genesis template json', './genesis-template.json');
+program.parse(process.argv);
 
 const validators = require('./validators');
 const init_holders = require('./init_holders');
 const init_cycle = require('./init_cycle');
 
-program.option('-c, --chainid <chainid>', 'chain id, mainnet 1116 testnet 1115 devnet 1112', '1116');
+const contracts = [
+  { key: 'validatorContract', file: 'contracts/ValidatorSet.sol', name: 'ValidatorSet' },
+  { key: 'systemRewardContract', file: 'contracts/SystemReward.sol', name: 'SystemReward' },
+  { key: 'slashContract', file: 'contracts/SlashIndicator.sol', name: 'SlashIndicator' },
+  { key: 'btcLightClient', file: 'contracts/BtcLightClient.sol', name: 'BtcLightClient' },
+  { key: 'relayerHub', file: 'contracts/RelayerHub.sol', name: 'RelayerHub' },
+  { key: 'candidateHub', file: 'contracts/CandidateHub.sol', name: 'CandidateHub' },
+  { key: 'govHub', file: 'contracts/GovHub.sol', name: 'GovHub' },
+  { key: 'pledgeAgent', file: 'contracts/PledgeAgent.sol', name: 'PledgeAgent' },
+  { key: 'burn', file: 'contracts/Burn.sol', name: 'Burn' },
+  { key: 'foundation', file: 'contracts/Foundation.sol', name: 'Foundation' },
+];
 
-program.option('--initValidatorSetBytes <initValidatorSetBytes>', 'initValidatorSetBytes', '');
-program.option('--initConsensusStateBytes <initConsensusStateBytes>', 'init consensusState bytes, hex encoding, no prefix with 0x', '42696e616e63652d436861696e2d4e696c650000000000000000000000000000000000000000000229eca254b3859bffefaf85f4c95da9fbd26527766b784272789c30ec56b380b6eb96442aaab207bc59978ba3dd477690f5c5872334fc39e627723daa97e441e88ba4515150ec3182bc82593df36f8abb25a619187fcfab7e552b94e64ed2deed000000e8d4a51000');
+function findImports(importPath) {
+  try {
+    const fullPath = path.resolve(__dirname, importPath);
+    const content = fs.readFileSync(fullPath, 'utf8');
+    return { contents: content };
+  } catch (e) {
+    return { error: `File not found: ${importPath}` };
+  }
+}
 
-require('./generate-system');
-require('./generate-validatorset');
-require('./generate-btclightclient');
-require('./generate-slash');
-require('./generate-govhub');
-require('./generate-candidatehub');
-require('./generate-pledgeagent');
-
-program.version('0.0.1');
-program.option('-o, --output <output-file>', 'Genesis json file', './genesis.json');
-program.option('-t, --template <template>', 'Genesis template json', './genesis-template.json');
-program.parse(process.argv);
-
-// compile contract
-function compileContract(key, contractFile, contractName) {
+function compileContract(contract) {
+  console.log(`Compiling ${contract.file}...`);
   return new Promise((resolve, reject) => {
-    const ls = spawn(path.resolve('./node_modules/.bin/solcjs'), [
-      '--bin',
-      '--optimize',
-      '--optimize-runs',
-      '10000',
-      '--base-path', './',
-      '--include-path', './',
-      contractFile
-    ]);
+    const contractPath = path.resolve(__dirname, contract.file);
+    const source = fs.readFileSync(contractPath, 'utf8');
 
-    const result = [];
-    const errorResult = [];
-    ls.stdout.on('data', data => {
-      result.push(data.toString());
-      console.log(data.toString(), 'stdout data------');  // 打印 stdout 数据
-    });
+    const input = {
+      language: 'Solidity',
+      sources: {
+        [contract.file]: {
+          content: source
+        }
+      },
+      settings: {
+        outputSelection: {
+          '*': {
+            '*': ['evm.bytecode.object']
+          }
+        },
+        optimizer: {
+          enabled: true,
+          runs: 10000
+        }
+      }
+    };
 
-    ls.stderr.on('data', data => {
-      errorResult.push(data.toString());
-      console.error(`stderr: ${data}`);  // 打印 stderr 数据
-    });
+    const output = JSON.parse(solc.compile(JSON.stringify(input), { import: findImports }));
 
-    ls.on('close', code => {
-      console.log(`child process exited with code ${code}`);
-      const compiledData = result.join('');
-      const compiledErrors = errorResult.join('');
-      console.log('Full Compiled Data:\n', compiledData);
-      console.log('Compiled Errors:\n', compiledErrors);  // 打印所有错误信息
-      resolve(compiledData);
-    });
-  }).then(compiledData => {
-    console.log(`${contractFile}:${contractName}`);
-    compiledData = compiledData.replace(
-      `======= ${contractFile}:${contractName} =======\nBinary:`,
-      '@@@@'
-    );
+    if (output.errors) {
+      output.errors.forEach(err => {
+        console.error(err.formattedMessage);
+      });
+    }
 
-    const matched = compiledData.match(/@@@@\n([a-f0-9]+)/);
-    console.log('Compiled Data:', compiledData);
-    return { key, compiledData: matched ? matched[1] : null, contractName, contractFile };
+    const compiledContract = output.contracts[contract.file];
+    for (const contractName in compiledContract) {
+      const contractData = compiledContract[contractName];
+      console.log(`Compiled ${contract.file}:${contractName}`);
+      resolve({ key: contract.key, bytecode: contractData.evm.bytecode.object });
+    }
   });
 }
 
-// compile files
-Promise.all([
-  compileContract('validatorContract', 'contracts/ValidatorSet.sol', 'ValidatorSet'),
-  compileContract('systemRewardContract', 'contracts/SystemReward.sol', 'SystemReward'),
-  compileContract('slashContract', 'contracts/SlashIndicator.sol', 'SlashIndicator'),
-  compileContract('btcLightClient', 'contracts/BtcLightClient.sol', 'BtcLightClient'),
-  compileContract('relayerHub', 'contracts/RelayerHub.sol', 'RelayerHub'),
-  compileContract('candidateHub', 'contracts/CandidateHub.sol', 'CandidateHub'),
-  compileContract('govHub', 'contracts/GovHub.sol', 'GovHub'),
-  compileContract('pledgeAgent', 'contracts/PledgeAgent.sol', 'PledgeAgent'),
-  compileContract('burn', 'contracts/Burn.sol', 'Burn'),
-  compileContract('foundation', 'contracts/Foundation.sol', 'Foundation')
-]).then(result => {
+Promise.all(contracts.map(compileContract)).then(compiledContracts => {
   const data = {
     chainId: program.chainid,
     initHolders: init_holders,
     initCycle: init_cycle,
     extraData: web3.utils.bytesToHex(validators.extraValidatorBytes)
   };
-  result.forEach(r => {
-    if (!r.compiledData) {
-      console.error(`Failed to compile ${r.contractFile}`);
-    }
-    data[r.key] = r.compiledData;
+
+  compiledContracts.forEach(contract => {
+    data[contract.key] = contract.bytecode || null;
   });
-  const templateString = fs.readFileSync(program.template).toString();
+
+  const templateString = fs.readFileSync(program.template, 'utf8');
   const resultString = nunjucks.renderString(templateString, data);
-  console.log(resultString,'resultString----');
-  // fs.writeFileSync(program.output, resultString);
+  console.log('Generated genesis.json:');
+  console.log(resultString);
+
+  fs.writeFileSync(program.output, resultString);
+  console.log(`Genesis file generated: ${program.output}`);
+}).catch(error => {
+  console.error('Error compiling contracts:', error);
 });
