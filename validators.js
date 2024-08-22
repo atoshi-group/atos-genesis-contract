@@ -5,64 +5,24 @@ const RLP = require('rlp');
 const validators = [
   
    {
-     "consensusAddr": "0x4121F067B0F5135D77C29b2B329e8Cb1bd96C960",
-     "feeAddr": "0xF8B18CeCC98D976ad253D38E4100a73D4e154726",
+     "consensusAddr": "0x043f606C684E88A74aF49bFf2137C2191a04E17e",
+     "feeAddr": "0xD9e314b0e67Ed7DD8cdcc3eE49E8800E0E5AB52C",
    },
    {
-     "consensusAddr": "0x7f461f8a1c35eDEcD6816e76Eb2E84eb661751eE",
-     "feeAddr": "0xF8B18CeCC98D976ad253D38E4100a73D4e154726",
+     "consensusAddr": "0xe13f6f04068846580214ac080048cd0711b5ECB6",
+     "feeAddr": "0xD9e314b0e67Ed7DD8cdcc3eE49E8800E0E5AB52C",
    },
    {
-     "consensusAddr": "0xfD806AB93db5742944B7B50Ce759E5EeE5f6FE50",
-     "feeAddr": "0xF8B18CeCC98D976ad253D38E4100a73D4e154726",
+     "consensusAddr": "0x03a28251967E5B7A340673e6387FE2536aaaD110",
+     "feeAddr": "0xD9e314b0e67Ed7DD8cdcc3eE49E8800E0E5AB52C",
    },
    {
-     "consensusAddr": "0x7Ef3a94AD1c443481fb3d86829355CA90477F8b5",
-     "feeAddr": "0xF8B18CeCC98D976ad253D38E4100a73D4e154726",
+     "consensusAddr": "0xd819bc15D1C68eF330573d247fbee3f28FB11D82",
+     "feeAddr": "0xD9e314b0e67Ed7DD8cdcc3eE49E8800E0E5AB52C",
    },
    {
-     "consensusAddr": "0x67D1ad48f91E131413BD0b04e823F3AE4F81E853",
-     "feeAddr": "0xF8B18CeCC98D976ad253D38E4100a73D4e154726",
-   },
-   {
-     "consensusAddr": "0x3Fb42caB4416024dC1B4C9e21B9acD0DFcef35f6",
-     "feeAddr": "0xF8B18CeCC98D976ad253D38E4100a73D4e154726",
-   },
-   {
-     "consensusAddr": "0x3511E3b8aC7336B99517D324145e9b5Bb33e08a4",
-     "feeAddr": "0xF8B18CeCC98D976ad253D38E4100a73D4e154726",
-   },
-   {
-     "consensusAddr": "0x729f39a54304fCc6eC279684c71491A385d7b9aE",
-     "feeAddr": "0xF8B18CeCC98D976ad253D38E4100a73D4e154726",
-   },
-   {
-     "consensusAddr": "0xF44a785Fd9F23F0abd443541386E71356Ce619dC",
-     "feeAddr": "0xF8B18CeCC98D976ad253D38E4100a73D4e154726",
-   },
-   {
-     "consensusAddr": "0x2EFd3CF0733421aec3E4202480d0A90bd1575149",
-     "feeAddr": "0xF8B18CeCC98D976ad253D38E4100a73D4e154726",
-   },
-   {
-     "consensusAddr": "0x613b0F519aDA008CB99B6130E89122BA416Bf159",
-     "feeAddr": "0xF8B18CeCC98D976ad253D38E4100a73D4e154726",
-   },
-   {
-     "consensusAddr": "0xc0925eeb800fF6Ba4695DED61562A10102152B5f",
-     "feeAddr": "0xF8B18CeCC98D976ad253D38E4100a73D4e154726",
-   },
-   {
-     "consensusAddr": "0x19e3C7D7E69F273f3F91C060Bb438a007f6Fc33c",
-     "feeAddr": "0xF8B18CeCC98D976ad253D38E4100a73D4e154726",
-   },
-   {
-     "consensusAddr": "0xE127f110D172a0c4C6209fE045dd71781e8fe9d4",
-     "feeAddr": "0xF8B18CeCC98D976ad253D38E4100a73D4e154726",
-   },
-   {
-     "consensusAddr": "0xF778dc4A199A440dBE9f16d1e13e185bB179B3b7",
-     "feeAddr": "0xF8B18CeCC98D976ad253D38E4100a73D4e154726",
+     "consensusAddr": "0xaa1Fa735345244b606b63b91CfDb238C13C862b9",
+     "feeAddr": "0xD9e314b0e67Ed7DD8cdcc3eE49E8800E0E5AB52C",
    },
 ];
 
