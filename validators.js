@@ -5,24 +5,24 @@ const RLP = require('rlp');
 const validators = [
   
    {
-     "consensusAddr": "0x043f606C684E88A74aF49bFf2137C2191a04E17e",
-     "feeAddr": "0xD9e314b0e67Ed7DD8cdcc3eE49E8800E0E5AB52C",
+     "consensusAddr": "0xa4eCD346d065827d303E95934eD712E978693d97",
+     "feeAddr": "0xa4eCD346d065827d303E95934eD712E978693d97",
    },
    {
-     "consensusAddr": "0xe13f6f04068846580214ac080048cd0711b5ECB6",
-     "feeAddr": "0xD9e314b0e67Ed7DD8cdcc3eE49E8800E0E5AB52C",
+     "consensusAddr": "0x2Af1516cBA4b8aBd55E98eD2AABF91D367F02734",
+     "feeAddr": "0x2Af1516cBA4b8aBd55E98eD2AABF91D367F02734",
    },
    {
-     "consensusAddr": "0x03a28251967E5B7A340673e6387FE2536aaaD110",
-     "feeAddr": "0xD9e314b0e67Ed7DD8cdcc3eE49E8800E0E5AB52C",
+     "consensusAddr": "0x217d71773cAF8916484800B959248DAfC44A0629",
+     "feeAddr": "0x217d71773cAF8916484800B959248DAfC44A0629",
    },
    {
-     "consensusAddr": "0xd819bc15D1C68eF330573d247fbee3f28FB11D82",
-     "feeAddr": "0xD9e314b0e67Ed7DD8cdcc3eE49E8800E0E5AB52C",
+     "consensusAddr": "0x82F74B5Adc6Cc4aCAc54D80a2559317284fE2b87",
+     "feeAddr": "0x82F74B5Adc6Cc4aCAc54D80a2559317284fE2b87",
    },
    {
-     "consensusAddr": "0xaa1Fa735345244b606b63b91CfDb238C13C862b9",
-     "feeAddr": "0xD9e314b0e67Ed7DD8cdcc3eE49E8800E0E5AB52C",
+     "consensusAddr": "0x68786fe80F10449C6cF3aCD97299fAcf15050721",
+     "feeAddr": "0x68786fe80F10449C6cF3aCD97299fAcf15050721",
    },
 ];
 

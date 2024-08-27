@@ -4,7 +4,6 @@ pragma solidity 0.8.4;
 import "./System.sol";
 import "./lib/BytesToTypes.sol";
 import "./lib/Memory.sol";
-import "./interface/IParamSubscriber.sol";
 import "./interface/IValidatorSet.sol";
 import "./interface/IPledgeAgent.sol";
 import "./interface/ISystemReward.sol";
@@ -13,7 +12,7 @@ import "./lib/RLPDecode.sol";
 
 /// This contract manages elected validators in each round
 /// All rewards for validators on Core blockchain are minted in genesis block and stored in this contract
-contract ValidatorSet is IValidatorSet, System, IParamSubscriber {
+contract ValidatorSet is IValidatorSet, System {
   using RLPDecode for bytes;
   using RLPDecode for RLPDecode.Iterator;
   using RLPDecode for RLPDecode.RLPItem;
@@ -23,7 +22,7 @@ contract ValidatorSet is IValidatorSet, System, IParamSubscriber {
   uint256 public constant REDUCE_FACTOR = 9639;
   uint256 public constant SUBSIDY_REDUCE_INTERVAL = 10512000;
 
-  bytes public constant INIT_VALIDATORSET_BYTES = hex"f8d7ea94043f606c684e88a74af49bff2137c2191a04e17e94d9e314b0e67ed7dd8cdcc3ee49e8800e0e5ab52cea94e13f6f04068846580214ac080048cd0711b5ecb694d9e314b0e67ed7dd8cdcc3ee49e8800e0e5ab52cea9403a28251967e5b7a340673e6387fe2536aaad11094d9e314b0e67ed7dd8cdcc3ee49e8800e0e5ab52cea94d819bc15d1c68ef330573d247fbee3f28fb11d8294d9e314b0e67ed7dd8cdcc3ee49e8800e0e5ab52cea94aa1fa735345244b606b63b91cfdb238c13c862b994d9e314b0e67ed7dd8cdcc3ee49e8800e0e5ab52c";
+  bytes public constant INIT_VALIDATORSET_BYTES = hex"f8d7ea94a4ecd346d065827d303e95934ed712e978693d9794a4ecd346d065827d303e95934ed712e978693d97ea942af1516cba4b8abd55e98ed2aabf91d367f02734942af1516cba4b8abd55e98ed2aabf91d367f02734ea94217d71773caf8916484800b959248dafc44a062994217d71773caf8916484800b959248dafc44a0629ea9482f74b5adc6cc4acac54d80a2559317284fe2b879482f74b5adc6cc4acac54d80a2559317284fe2b87ea9468786fe80f10449c6cf3acd97299facf150507219468786fe80f10449c6cf3acd97299facf15050721";
 
   /*********************** state of the contract **************************/
   uint256 public blockReward;
@@ -293,25 +292,7 @@ contract ValidatorSet is IValidatorSet, System, IParamSubscriber {
     IPledgeAgent(PLEDGE_AGENT_ADDR).onFelony(operateAddress);
   }
 
-  /*********************** Param update ********************************/
-  /// Update parameters through governance vote
-  /// @param key The name of the parameter
-  /// @param value the new value set to the parameter
-  function updateParam(string calldata key, bytes calldata value) external override onlyInit onlyGov {
-    if (value.length != 32) {
-      revert MismatchParamLength(key);
-    }
-    if (Memory.compareStrings(key, "blockRewardIncentivePercent")) {
-      uint256 newBlockRewardIncentivePercent = BytesToTypes.bytesToUint256(32, value);
-      if (newBlockRewardIncentivePercent > 100) {
-        revert OutOfBounds(key, newBlockRewardIncentivePercent, 0, 100);
-      }
-      blockRewardIncentivePercent = newBlockRewardIncentivePercent;
-    } else {
-      require(false, "unknown param");
-    }
-    emit paramChange(key, value);
-  }
+
 
   /*********************** Internal Functions **************************/
   function checkValidatorSet(

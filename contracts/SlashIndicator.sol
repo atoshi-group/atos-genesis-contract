@@ -6,13 +6,13 @@ import "./lib/Memory.sol";
 import "./lib/BytesLib.sol";
 import "./interface/ISlashIndicator.sol";
 import "./interface/IValidatorSet.sol";
-import "./interface/IParamSubscriber.sol";
+
 import "./interface/ISystemReward.sol";
 import "./lib/RLPDecode.sol";
 import "./lib/RLPEncode.sol";
 
 /// This contract manages slash/jail operations to validators on Core blockchain
-contract SlashIndicator is ISlashIndicator,System,IParamSubscriber{
+contract SlashIndicator is ISlashIndicator,System{
   using RLPDecode for bytes;
   using RLPDecode for RLPDecode.RLPItem;
   using RLPEncode for bytes;
@@ -22,7 +22,7 @@ contract SlashIndicator is ISlashIndicator,System,IParamSubscriber{
   uint256 public constant FELONY_THRESHOLD = 150;
   uint256 public constant DECREASE_RATE = 4;
   uint256 public constant INIT_REWARD_FOR_REPORT_DOUBLE_SIGN = 5e20;
-  uint32 public constant CHAINID = 2024;
+  uint32 public constant CHAINID = 1167;
   uint256 public constant INIT_FELONY_DEPOSIT = 1e21;
   uint256 public constant INIT_FELONY_ROUND = 2;
   uint256 public constant INFINITY_ROUND = 0xFFFFFFFFFFFFFFFF;
@@ -167,50 +167,6 @@ contract SlashIndicator is ISlashIndicator,System,IParamSubscriber{
       j--;
     }
     emit indicatorCleaned();
-  }
-
-  /*********************** Param update ********************************/
-  /// Update parameters through governance vote
-  /// @param key The name of the parameter
-  /// @param value the new value set to the parameter
-  function updateParam(string calldata key, bytes calldata value) external override onlyInit onlyGov{
-    if (value.length != 32) {
-      revert MismatchParamLength(key);
-    }
-    if (Memory.compareStrings(key,"misdemeanorThreshold")) {
-      uint256 newMisdemeanorThreshold = BytesToTypes.bytesToUint256(32, value);
-      if (newMisdemeanorThreshold == 0 || newMisdemeanorThreshold >= felonyThreshold) {
-        revert OutOfBounds(key, newMisdemeanorThreshold, 1, felonyThreshold - 1);
-      }
-      misdemeanorThreshold = newMisdemeanorThreshold;
-    } else if (Memory.compareStrings(key,"felonyThreshold")) {
-      uint256 newFelonyThreshold = BytesToTypes.bytesToUint256(32, value);
-      if (newFelonyThreshold <= misdemeanorThreshold) {
-        revert OutOfBounds(key, newFelonyThreshold, misdemeanorThreshold + 1, type(uint256).max);
-      }
-      felonyThreshold = newFelonyThreshold;
-    } else if (Memory.compareStrings(key,"rewardForReportDoubleSign")) {
-      uint256 newRewardForReportDoubleSign = BytesToTypes.bytesToUint256(32, value);
-      if (newRewardForReportDoubleSign == 0 || newRewardForReportDoubleSign > 1e21) {
-        revert OutOfBounds(key, newRewardForReportDoubleSign, 1, 1e21);
-      }
-      rewardForReportDoubleSign = newRewardForReportDoubleSign;
-    } else if (Memory.compareStrings(key,"felonyDeposit")) {
-      uint256 newFelonyDeposit = BytesToTypes.bytesToUint256(32, value);
-      if (newFelonyDeposit < 1e18) {
-        revert OutOfBounds(key, newFelonyDeposit, 1e18, type(uint256).max);
-      }
-      felonyDeposit = newFelonyDeposit;
-    } else if (Memory.compareStrings(key,"felonyRound")) {
-      uint256 newFelonyRound = BytesToTypes.bytesToUint256(32, value);
-      if (newFelonyRound == 0) {
-        revert OutOfBounds(key, newFelonyRound, 1, type(uint256).max);
-      }
-      felonyRound = newFelonyRound;
-    } else {
-      require(false, "unknown param");
-    }
-    emit paramChange(key,value);
   }
 
   /*********************** query api ********************************/

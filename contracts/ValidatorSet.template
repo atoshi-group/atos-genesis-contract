@@ -4,7 +4,6 @@ pragma solidity 0.8.4;
 import "./System.sol";
 import "./lib/BytesToTypes.sol";
 import "./lib/Memory.sol";
-import "./interface/IParamSubscriber.sol";
 import "./interface/IValidatorSet.sol";
 import "./interface/IPledgeAgent.sol";
 import "./interface/ISystemReward.sol";
@@ -13,7 +12,7 @@ import "./lib/RLPDecode.sol";
 
 /// This contract manages elected validators in each round
 /// All rewards for validators on Core blockchain are minted in genesis block and stored in this contract
-contract ValidatorSet is IValidatorSet, System, IParamSubscriber {
+contract ValidatorSet is IValidatorSet, System {
   using RLPDecode for bytes;
   using RLPDecode for RLPDecode.Iterator;
   using RLPDecode for RLPDecode.RLPItem;
@@ -293,25 +292,7 @@ contract ValidatorSet is IValidatorSet, System, IParamSubscriber {
     IPledgeAgent(PLEDGE_AGENT_ADDR).onFelony(operateAddress);
   }
 
-  /*********************** Param update ********************************/
-  /// Update parameters through governance vote
-  /// @param key The name of the parameter
-  /// @param value the new value set to the parameter
-  function updateParam(string calldata key, bytes calldata value) external override onlyInit onlyGov {
-    if (value.length != 32) {
-      revert MismatchParamLength(key);
-    }
-    if (Memory.compareStrings(key, "blockRewardIncentivePercent")) {
-      uint256 newBlockRewardIncentivePercent = BytesToTypes.bytesToUint256(32, value);
-      if (newBlockRewardIncentivePercent > 100) {
-        revert OutOfBounds(key, newBlockRewardIncentivePercent, 0, 100);
-      }
-      blockRewardIncentivePercent = newBlockRewardIncentivePercent;
-    } else {
-      require(false, "unknown param");
-    }
-    emit paramChange(key, value);
-  }
+
 
   /*********************** Internal Functions **************************/
   function checkValidatorSet(

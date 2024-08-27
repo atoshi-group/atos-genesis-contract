@@ -2,7 +2,7 @@
 pragma solidity 0.8.4;
 
 import "./interface/IPledgeAgent.sol";
-import "./interface/IParamSubscriber.sol";
+
 import "./interface/ICandidateHub.sol";
 import "./interface/ISystemReward.sol";
 import "./lib/Address.sol";
@@ -19,10 +19,8 @@ import "./System.sol";
 /// `effective transfer` only contains the amount of CORE tokens transferred 
 /// which are eligible for claiming rewards in the acting round
 
-contract PledgeAgent is IPledgeAgent, System, IParamSubscriber {
+contract PledgeAgent is IPledgeAgent, System {
   uint256 public constant INIT_REQUIRED_COIN_DEPOSIT = 1e18;
-  uint256 public constant INIT_HASH_POWER_FACTOR = 20000;
-  uint256 public constant POWER_BLOCK_FACTOR = 1e18;
 
   uint256 public requiredCoinDeposit;
 
@@ -30,7 +28,6 @@ contract PledgeAgent is IPledgeAgent, System, IParamSubscriber {
   // the default value of powerFactor is set to 20000 
   // which means the overall BTC hash power takes 2/3 total weight 
   // when calculating hybrid score and distributing block rewards
-  uint256 public powerFactor;
 
   // key: candidate's operateAddr
   mapping(address => Agent) public agentsMap;
@@ -90,9 +87,7 @@ contract PledgeAgent is IPledgeAgent, System, IParamSubscriber {
   }
 
   struct RoundState {
-    uint256 power;
     uint256 coin;
-    uint256 powerFactor;
   }
 
   /*********************** events **************************/
@@ -106,7 +101,7 @@ contract PledgeAgent is IPledgeAgent, System, IParamSubscriber {
     uint256 amount,
     uint256 totalAmount
   );
-  event roundReward(address indexed agent, uint256 coinReward, uint256 powerReward);
+  event roundReward(address indexed agent, uint256 coinReward);
   event claimedReward(address indexed delegator, address indexed operator, uint256 amount, bool success);
 
   /// The validator candidate is inactive, it is expected to be active
@@ -120,7 +115,7 @@ contract PledgeAgent is IPledgeAgent, System, IParamSubscriber {
 
   function init() external onlyNotInit {
     requiredCoinDeposit = INIT_REQUIRED_COIN_DEPOSIT;
-    powerFactor = INIT_HASH_POWER_FACTOR;
+
     roundTag = 1;
     alreadyInit = true;
   }
@@ -154,33 +149,30 @@ contract PledgeAgent is IPledgeAgent, System, IParamSubscriber {
       }
       r.totalReward = rewardList[i];
       r.remainReward = rewardList[i];
-      uint256 coinReward = rewardList[i] * a.coin * rs.power / roundScore;
-      uint256 powerReward = rewardList[i] * a.power * rs.coin / 10000 * rs.powerFactor / roundScore;
-      emit roundReward(agentList[i], coinReward, powerReward);
+      uint256 coinReward = rewardList[i] * a.coin / roundScore;
+
+      emit roundReward(agentList[i], coinReward);
     }
   }
 
   /// Calculate hybrid score for all candidates
   /// @param candidates List of candidate operator addresses
-  /// @param powers List of power value in this round
   /// @return scores List of hybrid scores of all validator candidates in this round
-  /// @return totalPower Total power delegate in this round
   /// @return totalCoin Total coin delegate in this round
-  function getHybridScore(address[] calldata candidates, uint256[] calldata powers
-  ) external override onlyCandidate
-      returns (uint256[] memory scores, uint256 totalPower, uint256 totalCoin) {
+  function getHybridScore(address[] calldata candidates
+  ) external override  onlyCandidate
+      returns (uint256[] memory scores, uint256 totalCoin) {
     uint256 candidateSize = candidates.length;
-    require(candidateSize == powers.length, "the length of candidates and powers should be equal");
 
-    totalPower = 1;
+
     totalCoin = 1;
     // setup `power` and `coin` values for every candidate
     for (uint256 i = 0; i < candidateSize; ++i) {
       Agent storage a = agentsMap[candidates[i]];
       // in order to improve accuracy, the calculation of power is based on 10^18
-      a.power = powers[i] * POWER_BLOCK_FACTOR;
+
       a.coin = a.totalDeposit;
-      totalPower += a.power;
+
       totalCoin += a.coin;
     }
 
@@ -188,79 +180,31 @@ contract PledgeAgent is IPledgeAgent, System, IParamSubscriber {
     scores = new uint256[](candidateSize);
     for (uint256 i = 0; i < candidateSize; ++i) {
       Agent storage a = agentsMap[candidates[i]];
-      scores[i] = a.power * totalCoin * powerFactor / 10000 + a.coin * totalPower;
+      scores[i] = a.coin;
     }
-    return (scores, totalPower, totalCoin);
+    return (scores, totalCoin);
   }
 
   /// Start new round, this is called by the CandidateHub contract
   /// @param validators List of elected validators in this round
-  /// @param totalPower Total power delegate in this round
   /// @param totalCoin Total coin delegate in this round
   /// @param round The new round tag
-  function setNewRound(address[] calldata validators, uint256 totalPower,
-      uint256 totalCoin, uint256 round) external override onlyCandidate {
+  function setNewRound(address[] calldata validators,
+      uint256 totalCoin, uint256 round) external  override onlyCandidate {
     RoundState memory rs;
-    rs.power = totalPower;
     rs.coin = totalCoin;
-    rs.powerFactor = powerFactor;
     stateMap[round] = rs;
 
     roundTag = round;
     uint256 validatorSize = validators.length;
     for (uint256 i = 0; i < validatorSize; ++i) {
       Agent storage a = agentsMap[validators[i]];
-      uint256 score = a.power * rs.coin * powerFactor / 10000 + a.coin * rs.power;
+      uint256 score = a.coin;
       a.rewardSet.push(Reward(0, 0, score, a.coin, round));
     }
   }
 
-  /// Distribute rewards for delegated hash power on one validator candidate
-  /// This method is called at the beginning of `turn round` workflow
-  /// @param candidate The operator address of the validator candidate
-  /// @param miners List of BTC miners who delegated hash power to the candidate
-  function distributePowerReward(address candidate, address[] calldata miners) external override onlyCandidate {
-    // distribute rewards to every miner
-    // note that the miners are represented in the form of reward addresses
-    // and they can be duplicated because everytime a miner delegates a BTC block
-    // to a validator on Core blockchain, a new record is added in BTCLightClient
-    Agent storage a = agentsMap[candidate];
-    uint256 l = a.rewardSet.length;
-    if (l == 0) {
-      return;
-    }
-    Reward storage r = a.rewardSet[l-1];
-    if (r.totalReward == 0 || r.round != roundTag) {
-      return;
-    }
-    RoundState storage rs = stateMap[roundTag];
-    uint256 reward = rs.coin * POWER_BLOCK_FACTOR * rs.powerFactor / 10000 * r.totalReward / r.score;
-    uint256 minerSize = miners.length;
 
-    uint256 powerReward = reward * minerSize;
-    uint256 undelegateCoinReward;
-    if (a.coin > r.coin) {
-      // undelegatedCoin = a.coin - r.coin
-      undelegateCoinReward = r.totalReward * (a.coin - r.coin) * rs.power / r.score;
-    }
-    uint256 remainReward = r.remainReward;
-    require(remainReward >= powerReward + undelegateCoinReward, "there is not enough reward");
-
-    for (uint256 i = 0; i < minerSize; i++) {
-      rewardMap[miners[i]] += reward;
-    }
-
-    if (r.coin == 0) {
-      delete a.rewardSet[l-1];
-      undelegateCoinReward = remainReward - powerReward;
-    } else if (powerReward != 0 || undelegateCoinReward != 0) {
-      r.remainReward -= (powerReward + undelegateCoinReward);
-    }
-
-    if (undelegateCoinReward != 0) {
-      ISystemReward(SYSTEM_REWARD_ADDR).receiveRewards{ value: undelegateCoinReward }();
-    }
-  }
 
   function onFelony(address agent) external override onlyValidator {
     Agent storage a = agentsMap[agent];
@@ -486,8 +430,7 @@ contract PledgeAgent is IPledgeAgent, System, IParamSubscriber {
       curReward = r.remainReward;
       r.coin = 0;
     } else {
-      uint256 rsPower = stateMap[r.round].power;
-      curReward = (r.totalReward * deposit * rsPower) / r.score;
+      curReward = (r.totalReward * deposit ) / r.score;
       require(r.remainReward >= curReward, "there is not enough reward");
       r.coin -= deposit;
       r.remainReward -= curReward;
@@ -557,31 +500,7 @@ contract PledgeAgent is IPledgeAgent, System, IParamSubscriber {
     return rewardAmount;
   }
 
-  /*********************** Governance ********************************/
-  /// Update parameters through governance vote
-  /// @param key The name of the parameter
-  /// @param value the new value set to the parameter
-  function updateParam(string calldata key, bytes calldata value) external override onlyInit onlyGov {
-    if (value.length != 32) {
-      revert MismatchParamLength(key);
-    }
-    if (Memory.compareStrings(key, "requiredCoinDeposit")) {
-      uint256 newRequiredCoinDeposit = BytesToTypes.bytesToUint256(32, value);
-      if (newRequiredCoinDeposit == 0) {
-        revert OutOfBounds(key, newRequiredCoinDeposit, 1, type(uint256).max);
-      }
-      requiredCoinDeposit = newRequiredCoinDeposit;
-    } else if (Memory.compareStrings(key, "powerFactor")) {
-      uint256 newHashPowerFactor = BytesToTypes.bytesToUint256(32, value);
-      if (newHashPowerFactor == 0) {
-        revert OutOfBounds(key, newHashPowerFactor, 1, type(uint256).max);
-      }
-      powerFactor = newHashPowerFactor;
-    } else {
-      require(false, "unknown param");
-    }
-    emit paramChange(key, value);
-  }
+
 
   /*********************** Public view ********************************/
   /// Get delegator information

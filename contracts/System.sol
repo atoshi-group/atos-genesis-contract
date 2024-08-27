@@ -1,7 +1,6 @@
 // SPDX-License-Identifier: Apache2.0
 pragma solidity 0.8.4;
 
-import "./interface/IRelayerHub.sol";
 
 contract System {
 
@@ -11,13 +10,8 @@ contract System {
   address public constant VALIDATOR_CONTRACT_ADDR = 0x0000000000000000000000000000000000001000;
   address public constant SLASH_CONTRACT_ADDR = 0x0000000000000000000000000000000000001001;
   address public constant SYSTEM_REWARD_ADDR = 0x0000000000000000000000000000000000001002;
-  address public constant LIGHT_CLIENT_ADDR = 0x0000000000000000000000000000000000001003;
-  address public constant RELAYER_HUB_ADDR = 0x0000000000000000000000000000000000001004;
   address public constant CANDIDATE_HUB_ADDR = 0x0000000000000000000000000000000000001005;
-  address public constant GOV_HUB_ADDR = 0x0000000000000000000000000000000000001006;
   address public constant PLEDGE_AGENT_ADDR = 0x0000000000000000000000000000000000001007;
-  address public constant BURN_ADDR = 0x0000000000000000000000000000000000001008;
-  address public constant FOUNDATION_ADDR = 0x0000000000000000000000000000000000001009;
 
 
   modifier onlyCoinbase() {
@@ -49,10 +43,6 @@ contract System {
     _;
   }
 
-  modifier onlyGov() {
-    require(msg.sender == GOV_HUB_ADDR, "the msg sender must be governance contract");
-    _;
-  }
 
   modifier onlyCandidate() {
     require(msg.sender == CANDIDATE_HUB_ADDR, "the msg sender must be candidate contract");
@@ -64,10 +54,6 @@ contract System {
     _;
   }
 
-  modifier onlyRelayer() {
-    require(IRelayerHub(RELAYER_HUB_ADDR).isRelayer(msg.sender), "the msg sender is not a relayer");
-    _;
-  }
 
   /// The length of param mismatch. Default is 32 bytes.
   /// @param name the name of param.

@@ -4,21 +4,21 @@ import "./lib/BytesToTypes.sol";
 import "./lib/Memory.sol";
 import "./interface/IValidatorSet.sol";
 import "./interface/ICandidateHub.sol";
-import "./interface/IParamSubscriber.sol";
+
 import "./interface/IPledgeAgent.sol";
 import "./interface/ISlashIndicator.sol";
-import "./interface/ILightClient.sol";
+
 import "./System.sol";
 import "./lib/Address.sol";
 
 /// This contract manages all validator candidates on Core blockchain
 /// It also exposes the method `turnRound` for the consensus engine to execute the `turn round` workflow
-contract CandidateHub is ICandidateHub, System, IParamSubscriber {
+contract CandidateHub is ICandidateHub, System {
 
   uint256 public constant INIT_REQUIRED_MARGIN = 1e22;
   uint256 public constant INIT_DUES = 1e20;
   uint256 public constant INIT_ROUND_INTERVAL = 86400;
-  uint256 public constant INIT_VALIDATOR_COUNT = 21;
+  uint256 public constant INIT_VALIDATOR_COUNT = 5;
   uint256 public constant MAX_COMMISSION_CHANGE = 10;
   uint256 public constant CANDIDATE_COUNT_LIMIT = 1000;
 
@@ -156,15 +156,7 @@ contract CandidateHub is ICandidateHub, System, IParamSubscriber {
   /// @dev this method is called by Golang consensus engine at the end of a round
   function turnRound() external onlyCoinbase onlyInit onlyZeroGasPrice {
     // distribute rewards for the about to end round
-    address[] memory lastCandidates = IValidatorSet(VALIDATOR_CONTRACT_ADDR).distributeReward();
-
-    // fetch BTC miners who delegated hash power in the about to end round; 
-    // and distribute rewards to them
-    uint256 lastCandidateSize = lastCandidates.length;
-    for (uint256 i = 0; i < lastCandidateSize; i++) {
-      address[] memory miners = ILightClient(LIGHT_CLIENT_ADDR).getRoundMiners(roundTag-7, lastCandidates[i]);
-      IPledgeAgent(PLEDGE_AGENT_ADDR).distributePowerReward(lastCandidates[i], miners);
-    }
+    //address[] memory lastCandidates = IValidatorSet(VALIDATOR_CONTRACT_ADDR).distributeReward();
 
     // update the system round tag; new round starts
     
@@ -182,7 +174,7 @@ contract CandidateHub is ICandidateHub, System, IParamSubscriber {
       if (statusList[i] == SET_CANDIDATE) validCount++;
     }
 
-    uint256[] memory powers;
+
     address[] memory candidates = new address[](validCount);
     uint256 j = 0;
     for (uint256 i = 0; i < candidateSize; i++) {
@@ -190,14 +182,11 @@ contract CandidateHub is ICandidateHub, System, IParamSubscriber {
         candidates[j++] = candidateSet[i].operateAddr;
       }
     }
-    // fetch hash power delegated on list of candidates
-    // which is used to calculate hybrid score for validators in the new round
-    powers = ILightClient(LIGHT_CLIENT_ADDR).getRoundPowers(roundTag-7, candidates);
 
     // calculate the hybrid score for all valid candidates and 
     // choose top ones to form the validator set of the new round
-    (uint256[] memory scores, uint256 totalPower, uint256 totalCoin) =
-      IPledgeAgent(PLEDGE_AGENT_ADDR).getHybridScore(candidates, powers);
+    (uint256[] memory scores, uint256 totalCoin) =
+      IPledgeAgent(PLEDGE_AGENT_ADDR).getHybridScore(candidates);
     address[] memory validatorList = getValidators(candidates, scores, validatorCount);
 
     // prepare arguments, and notify ValidatorSet contract
@@ -225,7 +214,7 @@ contract CandidateHub is ICandidateHub, System, IParamSubscriber {
     ISlashIndicator(SLASH_CONTRACT_ADDR).clean();
 
     // notify PledgeAgent contract
-    IPledgeAgent(PLEDGE_AGENT_ADDR).setNewRound(validatorList, totalPower, totalCoin, roundTag);
+    IPledgeAgent(PLEDGE_AGENT_ADDR).setNewRound(validatorList, totalCoin, roundTag);
 
     // update validator jail status
     for (uint256 i = 0; i < candidateSize; i++) {
@@ -429,43 +418,7 @@ contract CandidateHub is ICandidateHub, System, IParamSubscriber {
     return candidateList;
   }
 
-  /*********************** Param update ********************************/
-  /// Update parameters through governance vote
-  /// @param key The name of the parameter
-  /// @param value the new value set to the parameter
-  function updateParam(string calldata key, bytes calldata value) external override onlyInit onlyGov {
-    if (value.length != 32) {
-      revert MismatchParamLength(key);
-    }
-    if (Memory.compareStrings(key, "requiredMargin")) {
-      uint256 newRequiredMargin = BytesToTypes.bytesToUint256(32, value);
-      if (newRequiredMargin <= dues) {
-        revert OutOfBounds(key, newRequiredMargin, dues+1, type(uint256).max);
-      }
-      requiredMargin = newRequiredMargin;
-    } else if (Memory.compareStrings(key, "dues")) {
-      uint256 newDues = BytesToTypes.bytesToUint256(32, value);
-      if (newDues == 0 || newDues >= requiredMargin) {
-        revert OutOfBounds(key, newDues, 1, requiredMargin - 1);
-      }
-      dues = newDues;
-    } else if (Memory.compareStrings(key, "validatorCount")) {
-      uint256 newValidatorCount = BytesToTypes.bytesToUint256(32, value);
-      if (newValidatorCount <= 5 || newValidatorCount >= 42) {
-        revert OutOfBounds(key, newValidatorCount, 6, 41);
-      }
-      validatorCount = newValidatorCount;
-    } else if (Memory.compareStrings(key, "maxCommissionChange")) {
-      uint256 newMaxCommissionChange = BytesToTypes.bytesToUint256(32, value);
-      if (newMaxCommissionChange == 0) {
-        revert OutOfBounds(key, newMaxCommissionChange, 1, type(uint256).max);
-      }
-      maxCommissionChange = newMaxCommissionChange;
-    } else {
-      require(false, "unknown param");
-    }
-    emit paramChange(key, value);
-  }
+
 
   /// Get list of validator candidates 
   /// @return List of operator addresses

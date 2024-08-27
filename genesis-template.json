@@ -26,21 +26,6 @@
   "mixHash": "0x0000000000000000000000000000000000000000000000000000000000000000",
   "coinbase": "0xffffFFFfFFffffffffffffffFfFFFfffFFFfFFfE",
   "alloc": {
-    "0x043f606C684E88A74aF49bFf2137C2191a04E17e": {
-      "balance": "10000000000000000000000000"
-    },
-    "0xe13f6f04068846580214ac080048cd0711b5ECB6": {
-      "balance": "10000000000000000000000000"
-    },
-    "0x03a28251967E5B7A340673e6387FE2536aaaD110": {
-      "balance": "10000000000000000000000000"
-    },
-    "0xd819bc15D1C68eF330573d247fbee3f28FB11D82": {
-      "balance": "10000000000000000000000000"
-    },
-    "0xaa1Fa735345244b606b63b91CfDb238C13C862b9": {
-      "balance": "10000000000000000000000000"
-    },
     "0xffffFFFfFFffffffffffffffFfFFFfffFFFfFFfE": {
       "balance": "0x0"
     },
@@ -56,14 +41,6 @@
       "balance": "10000000000000000000000000",
       "code": "0x{{systemRewardContract}}"
     },
-    "0x0000000000000000000000000000000000001003": {
-      "balance": "0x0",
-      "code": "0x{{btcLightClient}}"
-    },
-    "0x0000000000000000000000000000000000001004": {
-      "balance": "0x0",
-      "code": "0x{{relayerHub}}"
-    },
     "0x0000000000000000000000000000000000001005": {
       "balance": "0x0",
       "code": "0x{{candidateHub}}"
@@ -72,17 +49,6 @@
       "balance": "0x0",
       "code": "0x{{pledgeAgent}}"
     },
-    "0x0000000000000000000000000000000000001008": {
-      "balance": "0x0",
-      "code": "0x{{burn}}"
-    },
-    "0x0000000000000000000000000000000000001009": {
-      "balance": "1250100000000000000000000000",
-      "code": "0x{{foundation}}"
-    },
-    "0x0000000000000000000000000000000000001006": {
-      "balance": "0x0",
-      "code": "0x{{govHub}}"
     }{% for v in initHolders %},
     "{{ v.address.replace('0x', '') }}": {
       "balance": "0x{{ v.balance }}"
