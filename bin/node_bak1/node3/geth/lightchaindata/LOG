@@ -1,0 +1,8 @@
+=============== Aug 10, 2024 (CST) ===============
+15:56:04.613199 log@legend F·NumFile S·FileSize N·Entry C·BadEntry B·BadBlock Ke·KeyError D·DroppedEntry L·Level Q·SeqNum T·TimeElapsed
+15:56:04.658119 db@open opening
+15:56:04.658606 version@stat F·[] S·0B[] Sc·[]
+15:56:04.680679 db@janitor F·2 G·0
+15:56:04.680869 db@open done T·22.710419ms
+15:56:04.682156 db@close closing
+15:56:04.682372 db@close done T·214.301µs

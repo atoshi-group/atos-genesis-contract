@@ -1,0 +1,709 @@
+[
+    {
+        "inputs": [
+            {
+                "name": "name",
+                "internalType": "string",
+                "type": "string"
+            }
+        ],
+        "name": "MismatchParamLength",
+        "type": "error"
+    },
+    {
+        "inputs": [
+            {
+                "name": "name",
+                "internalType": "string",
+                "type": "string"
+            },
+            {
+                "name": "given",
+                "internalType": "uint256",
+                "type": "uint256"
+            },
+            {
+                "name": "lowerBound",
+                "internalType": "uint256",
+                "type": "uint256"
+            },
+            {
+                "name": "upperBound",
+                "internalType": "uint256",
+                "type": "uint256"
+            }
+        ],
+        "name": "OutOfBounds",
+        "type": "error"
+    },
+    {
+        "inputs": [
+            {
+                "indexed": true,
+                "name": "validator",
+                "internalType": "address",
+                "type": "address"
+            },
+            {
+                "indexed": false,
+                "name": "amount",
+                "internalType": "uint256",
+                "type": "uint256"
+            }
+        ],
+        "name": "deprecatedDeposit",
+        "anonymous": false,
+        "type": "event"
+    },
+    {
+        "inputs": [
+            {
+                "indexed": true,
+                "name": "operateAddress",
+                "internalType": "address",
+                "type": "address"
+            },
+            {
+                "indexed": true,
+                "name": "validator",
+                "internalType": "address payable",
+                "type": "address"
+            },
+            {
+                "indexed": false,
+                "name": "amount",
+                "internalType": "uint256",
+                "type": "uint256"
+            },
+            {
+                "indexed": false,
+                "name": "totalReward",
+                "internalType": "uint256",
+                "type": "uint256"
+            }
+        ],
+        "name": "directTransfer",
+        "anonymous": false,
+        "type": "event"
+    },
+    {
+        "inputs": [
+            {
+                "indexed": true,
+                "name": "operateAddress",
+                "internalType": "address",
+                "type": "address"
+            },
+            {
+                "indexed": true,
+                "name": "validator",
+                "internalType": "address payable",
+                "type": "address"
+            },
+            {
+                "indexed": false,
+                "name": "amount",
+                "internalType": "uint256",
+                "type": "uint256"
+            },
+            {
+                "indexed": false,
+                "name": "totalReward",
+                "internalType": "uint256",
+                "type": "uint256"
+            }
+        ],
+        "name": "directTransferFail",
+        "anonymous": false,
+        "type": "event"
+    },
+    {
+        "inputs": [
+            {
+                "indexed": false,
+                "name": "key",
+                "internalType": "string",
+                "type": "string"
+            },
+            {
+                "indexed": false,
+                "name": "value",
+                "internalType": "bytes",
+                "type": "bytes"
+            }
+        ],
+        "name": "paramChange",
+        "anonymous": false,
+        "type": "event"
+    },
+    {
+        "inputs": [
+            {
+                "indexed": true,
+                "name": "from",
+                "internalType": "address",
+                "type": "address"
+            },
+            {
+                "indexed": false,
+                "name": "amount",
+                "internalType": "uint256",
+                "type": "uint256"
+            }
+        ],
+        "name": "received",
+        "anonymous": false,
+        "type": "event"
+    },
+    {
+        "inputs": [
+            {
+                "indexed": false,
+                "name": "amount",
+                "internalType": "uint256",
+                "type": "uint256"
+            }
+        ],
+        "name": "systemTransfer",
+        "anonymous": false,
+        "type": "event"
+    },
+    {
+        "inputs": [
+            {
+                "indexed": true,
+                "name": "validator",
+                "internalType": "address",
+                "type": "address"
+            },
+            {
+                "indexed": false,
+                "name": "amount",
+                "internalType": "uint256",
+                "type": "uint256"
+            }
+        ],
+        "name": "validatorDeposit",
+        "anonymous": false,
+        "type": "event"
+    },
+    {
+        "inputs": [
+            {
+                "indexed": true,
+                "name": "validator",
+                "internalType": "address",
+                "type": "address"
+            },
+            {
+                "indexed": false,
+                "name": "amount",
+                "internalType": "uint256",
+                "type": "uint256"
+            }
+        ],
+        "name": "validatorFelony",
+        "anonymous": false,
+        "type": "event"
+    },
+    {
+        "inputs": [
+            {
+                "indexed": true,
+                "name": "validator",
+                "internalType": "address",
+                "type": "address"
+            },
+            {
+                "indexed": false,
+                "name": "amount",
+                "internalType": "uint256",
+                "type": "uint256"
+            }
+        ],
+        "name": "validatorMisdemeanor",
+        "anonymous": false,
+        "type": "event"
+    },
+    {
+        "inputs": [],
+        "name": "validatorSetUpdated",
+        "anonymous": false,
+        "type": "event"
+    },
+    {
+        "outputs": [
+            {
+                "name": "",
+                "internalType": "uint256",
+                "type": "uint256"
+            }
+        ],
+        "inputs": [],
+        "name": "BLOCK_REWARD",
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "outputs": [
+            {
+                "name": "",
+                "internalType": "uint256",
+                "type": "uint256"
+            }
+        ],
+        "inputs": [],
+        "name": "BLOCK_REWARD_INCENTIVE_PERCENT",
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "outputs": [
+            {
+                "name": "",
+                "internalType": "address",
+                "type": "address"
+            }
+        ],
+        "inputs": [],
+        "name": "BURN_ADDR",
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "outputs": [
+            {
+                "name": "",
+                "internalType": "address",
+                "type": "address"
+            }
+        ],
+        "inputs": [],
+        "name": "CANDIDATE_HUB_ADDR",
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "outputs": [
+            {
+                "name": "",
+                "internalType": "address",
+                "type": "address"
+            }
+        ],
+        "inputs": [],
+        "name": "FOUNDATION_ADDR",
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "outputs": [
+            {
+                "name": "",
+                "internalType": "address",
+                "type": "address"
+            }
+        ],
+        "inputs": [],
+        "name": "GOV_HUB_ADDR",
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "outputs": [
+            {
+                "name": "",
+                "internalType": "bytes",
+                "type": "bytes"
+            }
+        ],
+        "inputs": [],
+        "name": "INIT_VALIDATORSET_BYTES",
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "outputs": [
+            {
+                "name": "",
+                "internalType": "address",
+                "type": "address"
+            }
+        ],
+        "inputs": [],
+        "name": "LIGHT_CLIENT_ADDR",
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "outputs": [
+            {
+                "name": "",
+                "internalType": "address",
+                "type": "address"
+            }
+        ],
+        "inputs": [],
+        "name": "PLEDGE_AGENT_ADDR",
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "outputs": [
+            {
+                "name": "",
+                "internalType": "uint256",
+                "type": "uint256"
+            }
+        ],
+        "inputs": [],
+        "name": "REDUCE_FACTOR",
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "outputs": [
+            {
+                "name": "",
+                "internalType": "address",
+                "type": "address"
+            }
+        ],
+        "inputs": [],
+        "name": "RELAYER_HUB_ADDR",
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "outputs": [
+            {
+                "name": "",
+                "internalType": "address",
+                "type": "address"
+            }
+        ],
+        "inputs": [],
+        "name": "SLASH_CONTRACT_ADDR",
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "outputs": [
+            {
+                "name": "",
+                "internalType": "uint256",
+                "type": "uint256"
+            }
+        ],
+        "inputs": [],
+        "name": "SUBSIDY_REDUCE_INTERVAL",
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "outputs": [
+            {
+                "name": "",
+                "internalType": "address",
+                "type": "address"
+            }
+        ],
+        "inputs": [],
+        "name": "SYSTEM_REWARD_ADDR",
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "outputs": [
+            {
+                "name": "",
+                "internalType": "address",
+                "type": "address"
+            }
+        ],
+        "inputs": [],
+        "name": "VALIDATOR_CONTRACT_ADDR",
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "outputs": [
+            {
+                "name": "",
+                "internalType": "bool",
+                "type": "bool"
+            }
+        ],
+        "inputs": [],
+        "name": "alreadyInit",
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "outputs": [
+            {
+                "name": "",
+                "internalType": "uint256",
+                "type": "uint256"
+            }
+        ],
+        "inputs": [],
+        "name": "blockReward",
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "outputs": [
+            {
+                "name": "",
+                "internalType": "uint256",
+                "type": "uint256"
+            }
+        ],
+        "inputs": [],
+        "name": "blockRewardIncentivePercent",
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "outputs": [
+            {
+                "name": "operateAddress",
+                "internalType": "address",
+                "type": "address"
+            },
+            {
+                "name": "consensusAddress",
+                "internalType": "address",
+                "type": "address"
+            },
+            {
+                "name": "feeAddress",
+                "internalType": "address payable",
+                "type": "address"
+            },
+            {
+                "name": "commissionThousandths",
+                "internalType": "uint256",
+                "type": "uint256"
+            },
+            {
+                "name": "income",
+                "internalType": "uint256",
+                "type": "uint256"
+            }
+        ],
+        "inputs": [
+            {
+                "name": "",
+                "internalType": "uint256",
+                "type": "uint256"
+            }
+        ],
+        "name": "currentValidatorSet",
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "outputs": [
+            {
+                "name": "",
+                "internalType": "uint256",
+                "type": "uint256"
+            }
+        ],
+        "inputs": [
+            {
+                "name": "",
+                "internalType": "address",
+                "type": "address"
+            }
+        ],
+        "name": "currentValidatorSetMap",
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "outputs": [],
+        "inputs": [
+            {
+                "name": "valAddr",
+                "internalType": "address",
+                "type": "address"
+            }
+        ],
+        "name": "deposit",
+        "stateMutability": "payable",
+        "type": "function"
+    },
+    {
+        "outputs": [
+            {
+                "name": "operateAddressList",
+                "internalType": "address[]",
+                "type": "address[]"
+            }
+        ],
+        "inputs": [],
+        "name": "distributeReward",
+        "stateMutability": "nonpayable",
+        "type": "function"
+    },
+    {
+        "outputs": [],
+        "inputs": [
+            {
+                "name": "validator",
+                "internalType": "address",
+                "type": "address"
+            },
+            {
+                "name": "felonyRound",
+                "internalType": "uint256",
+                "type": "uint256"
+            },
+            {
+                "name": "felonyDeposit",
+                "internalType": "uint256",
+                "type": "uint256"
+            }
+        ],
+        "name": "felony",
+        "stateMutability": "nonpayable",
+        "type": "function"
+    },
+    {
+        "outputs": [
+            {
+                "name": "",
+                "internalType": "uint256",
+                "type": "uint256"
+            }
+        ],
+        "inputs": [
+            {
+                "name": "validator",
+                "internalType": "address",
+                "type": "address"
+            }
+        ],
+        "name": "getIncoming",
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "outputs": [
+            {
+                "name": "",
+                "internalType": "address[]",
+                "type": "address[]"
+            }
+        ],
+        "inputs": [],
+        "name": "getValidators",
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "outputs": [],
+        "inputs": [],
+        "name": "init",
+        "stateMutability": "nonpayable",
+        "type": "function"
+    },
+    {
+        "outputs": [
+            {
+                "name": "",
+                "internalType": "bool",
+                "type": "bool"
+            }
+        ],
+        "inputs": [
+            {
+                "name": "addr",
+                "internalType": "address",
+                "type": "address"
+            }
+        ],
+        "name": "isValidator",
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "outputs": [],
+        "inputs": [
+            {
+                "name": "validator",
+                "internalType": "address",
+                "type": "address"
+            }
+        ],
+        "name": "misdemeanor",
+        "stateMutability": "nonpayable",
+        "type": "function"
+    },
+    {
+        "outputs": [
+            {
+                "name": "",
+                "internalType": "uint256",
+                "type": "uint256"
+            }
+        ],
+        "inputs": [],
+        "name": "totalInCome",
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "outputs": [],
+        "inputs": [
+            {
+                "name": "key",
+                "internalType": "string",
+                "type": "string"
+            },
+            {
+                "name": "value",
+                "internalType": "bytes",
+                "type": "bytes"
+            }
+        ],
+        "name": "updateParam",
+        "stateMutability": "nonpayable",
+        "type": "function"
+    },
+    {
+        "outputs": [],
+        "inputs": [
+            {
+                "name": "operateAddrList",
+                "internalType": "address[]",
+                "type": "address[]"
+            },
+            {
+                "name": "consensusAddrList",
+                "internalType": "address[]",
+                "type": "address[]"
+            },
+            {
+                "name": "feeAddrList",
+                "internalType": "address payable[]",
+                "type": "address[]"
+            },
+            {
+                "name": "commissionThousandthsList",
+                "internalType": "uint256[]",
+                "type": "uint256[]"
+            }
+        ],
+        "name": "updateValidatorSet",
+        "stateMutability": "nonpayable",
+        "type": "function"
+    },
+    {
+        "stateMutability": "payable",
+        "type": "receive"
+    }
+]
