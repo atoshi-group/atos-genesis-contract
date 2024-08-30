@@ -1,3 +1,29 @@
+#path_geth=node
+#chainid=1167
+##bash version >= 4.0
+#declare -A node_wallet
+
+#node_wallet["node0"]="0xa4eCD346d065827d303E95934eD712E978693d97"
+#node_wallet["node1"]="0x2af1516cba4b8abd55e98ed2aabf91d367f02734"
+#node_wallet["node2"]="0x217d71773caf8916484800b959248dafc44a0629"
+#node_wallet["node3"]="0x82f74b5adc6cc4acac54d80a2559317284fe2b87"
+#node_wallet["node4"]="0x68786fe80f10449c6cf3acd97299facf15050721"
+
+#function init(){
+#rm -rf ${path_geth}/node*/{geth,logs}
+#for((i=0; i<5;i++)); do
+#./geth init --datadir ${path_geth}/node${i}  genesis.json
+#done
+#}
+
+#function start_geth(){
+#        for((i=0; i<5; i++)); do
+#            nohup ${path_geth}/node${i}/geth${i} --networkid ${chainid} --config ${path_geth}/node${i}/config.toml --datadir ${path_geth}/node${i} --unlock ${node_wallet[node${i}]} --password ${path_geth}/password.txt --mine --allow-insecure-unlock --cache 8000 --verbosity 5 --gcmode=full --nodiscover >logs/node${i}.log 2>&1 &
+#                sleep  2
+#        done
+#}
+
+
 function init(){
 rm -rf node/node*/{geth,logs}
 ./geth init --datadir node/node1  genesis.json
