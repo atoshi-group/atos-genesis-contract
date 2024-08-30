@@ -22,6 +22,7 @@
 #                sleep  2
 #        done
 #}
+mkdir logs
 
 function init(){
 rm -rf node/node*/{geth,logs}
