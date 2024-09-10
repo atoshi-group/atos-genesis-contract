@@ -119,7 +119,9 @@ class AccountTracker:
                         total_tx_fee += tx.gas_price * tx.gas_used
         previous_balance = web3.eth.get_balance(self.account.address, self.height)
         self.height = chain.height
-        return self.account.balance() - previous_balance + total_tx_fee
+        x=self.account.balance()
+        print("#:",x,self.account.address)
+        return x - previous_balance + total_tx_fee
 
 
 def get_tracker(account: LocalAccount) -> AccountTracker:

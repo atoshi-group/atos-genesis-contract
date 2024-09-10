@@ -32,31 +32,31 @@ def candidate_hub(accounts):
     return c
 
 
-@pytest.fixture(scope="module")
-def btc_light_client(accounts):
-    c = accounts[0].deploy(BtcLightClientMock)
-    c.init()
-    if is_development:
-        c.developmentInit()
-    return c
+# @pytest.fixture(scope="module")
+# def btc_light_client(accounts):
+#     c = accounts[0].deploy(BtcLightClientMock)
+#     c.init()
+#     if is_development:
+#         c.developmentInit()
+#     return c
 
 
-@pytest.fixture(scope="module")
-def gov_hub(accounts):
-    c = accounts[0].deploy(GovHubMock)
-    c.init()
-    if is_development:
-        c.developmentInit()
-    return c
+# @pytest.fixture(scope="module")
+# def gov_hub(accounts):
+#     c = accounts[0].deploy(GovHubMock)
+#     c.init()
+#     if is_development:
+#         c.developmentInit()
+#     return c
 
 
-@pytest.fixture(scope="module")
-def relay_hub(accounts):
-    c = accounts[0].deploy(RelayerHubMock)
-    c.init()
-    if is_development:
-        c.developmentInit()
-    return c
+# @pytest.fixture(scope="module")
+# def relay_hub(accounts):
+#     c = accounts[0].deploy(RelayerHubMock)
+#     c.init()
+#     if is_development:
+#         c.developmentInit()
+#     return c
 
 
 @pytest.fixture(scope="module")
@@ -91,17 +91,17 @@ def pledge_agent(accounts):
     return c
 
 
-@pytest.fixture(scope="module")
-def burn(accounts):
-    c = accounts[0].deploy(Burn)
-    c.init()
-    return c
+# @pytest.fixture(scope="module")
+# def burn(accounts):
+#     c = accounts[0].deploy(Burn)
+#     c.init()
+#     return c
 
 
-@pytest.fixture(scope="module")
-def foundation(accounts):
-    c = accounts[0].deploy(Foundation)
-    return c
+# @pytest.fixture(scope="module")
+# def foundation(accounts):
+#     c = accounts[0].deploy(Foundation)
+#     return c
 
 
 # test contract
@@ -114,30 +114,29 @@ def test_lib_memory(accounts):
 @pytest.fixture(scope="module", autouse=True)
 def set_system_contract_address(
     candidate_hub,
-    btc_light_client,
-    gov_hub,
-    relay_hub,
+    # btc_light_client,
+    # gov_hub,
+    # relay_hub,
     slash_indicator,
     system_reward,
     validator_set,
     pledge_agent,
-    burn,
-    foundation
+    # burn,
+    # foundation
 ):
     args = [validator_set.address, slash_indicator.address, system_reward.address,
-            btc_light_client.address, relay_hub.address, candidate_hub.address,
-            gov_hub.address, pledge_agent.address, burn.address, foundation]
+             candidate_hub.address,pledge_agent.address]
 
     candidate_hub.updateContractAddr(*args)
-    btc_light_client.updateContractAddr(*args)
-    gov_hub.updateContractAddr(*args)
-    relay_hub.updateContractAddr(*args)
+    # btc_light_client.updateContractAddr(*args)
+    # gov_hub.updateContractAddr(*args)
+    # relay_hub.updateContractAddr(*args)
     slash_indicator.updateContractAddr(*args)
     system_reward.updateContractAddr(*args)
     validator_set.updateContractAddr(*args)
     pledge_agent.updateContractAddr(*args)
-    burn.updateContractAddr(*args)
-    foundation.updateContractAddr(*args)
+    # burn.updateContractAddr(*args)
+    # foundation.updateContractAddr(*args)
 
     system_reward.init()
     # used for distribute reward

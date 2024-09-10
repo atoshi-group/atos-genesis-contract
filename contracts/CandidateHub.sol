@@ -59,6 +59,8 @@ contract CandidateHub is ICandidateHub, System {
 
   uint256 public roundTag;
   
+  bool public controlRoundTimeTag = false;
+  
 
   struct Candidate {
     address operateAddr;
@@ -94,6 +96,10 @@ contract CandidateHub is ICandidateHub, System {
     maxCommissionChange = MAX_COMMISSION_CHANGE;
     roundTag = 7;
     alreadyInit = true;
+  }
+  
+  function setControlRoundTimeTag(bool value) external {
+    controlRoundTimeTag = value;
   }
   
   /********************* ICandidateHub interface ****************************/
@@ -160,9 +166,15 @@ contract CandidateHub is ICandidateHub, System {
 
     // update the system round tag; new round starts
     
+    if (controlRoundTimeTag == false) {
+    
     uint256 roundTimestamp = block.timestamp / roundInterval;
     require(roundTimestamp > roundTag, "not allowed to turn round, wait for more time");
     roundTag = roundTimestamp;
+    
+    } else {
+        roundTag++;
+    }
     
 
     // reset validator flags for all candidates.

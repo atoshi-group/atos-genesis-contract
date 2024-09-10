@@ -4,7 +4,7 @@ import "../CandidateHub.sol";
 
 contract CandidateHubUnitMock is CandidateHub {
   uint256[] public scores;
-  uint256 public totalPower;
+//  uint256 public totalPower;
   uint256 public totalCoin;
 
   function developmentInit() external {
@@ -34,10 +34,9 @@ contract CandidateHubUnitMock is CandidateHub {
     return candidateSet[operateMap[k] - 1];
   }
 
-  function getScoreMock(address[] memory candidates, uint256[] memory powers) external {
-    (scores, totalPower, totalCoin) = IPledgeAgent(PLEDGE_AGENT_ADDR).getHybridScore(
-      candidates,
-      powers
+  function getScoreMock(address[] memory candidates) external {
+    (scores, totalCoin) = IPledgeAgent(PLEDGE_AGENT_ADDR).getHybridScore(
+      candidates
     );
   }
 

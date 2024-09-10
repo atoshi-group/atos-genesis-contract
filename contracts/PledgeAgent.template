@@ -42,7 +42,7 @@ contract PledgeAgent is IPledgeAgent, System {
 
   // This field is not used in the latest implementation
   // It stays here in order to keep data compatibility for TestNet upgrade
-  mapping(bytes20 => address) public btc2ethMap;
+  //mapping(bytes20 => address) public btc2ethMap;
 
   // key: round index
   // value: useful state information of round
@@ -82,7 +82,7 @@ contract PledgeAgent is IPledgeAgent, System {
     uint256 totalDeposit;
     mapping(address => CoinDelegator) cDelegatorMap;
     Reward[] rewardSet;
-    uint256 power;
+    //uint256 power;
     uint256 coin;
   }
 

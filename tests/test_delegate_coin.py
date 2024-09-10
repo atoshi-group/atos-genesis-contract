@@ -27,10 +27,15 @@ def set_min_init_delegate_value(min_init_delegate_value):
 @pytest.fixture(scope="module", autouse=True)
 def set_block_reward(validator_set):
     global BLOCK_REWARD
+    print("#1",BLOCK_REWARD)
     block_reward = validator_set.blockReward()
+    print("#1",block_reward)
     block_reward_incentive_percent = validator_set.blockRewardIncentivePercent()
+    print("#2",block_reward_incentive_percent)
     total_block_reward = block_reward + TX_FEE
+    print("#3",total_block_reward)
     BLOCK_REWARD = total_block_reward * ((100 - block_reward_incentive_percent) / 100)
+    print("#4",BLOCK_REWARD)
 
 
 @pytest.fixture()
@@ -54,6 +59,7 @@ def test_delegate_once(pledge_agent, validator_set, claim_type):
 
     if claim_type == "claim":
         pledge_agent.claimReward([operator])
+        print("#delta",tracker.delta())
         assert tracker.delta() == BLOCK_REWARD / 2
     elif claim_type == "delegate":
         pledge_agent.delegateCoin(operator, {"value": 100})

@@ -5,38 +5,38 @@ from brownie import accounts
 from eth_abi import encode_abi
 from .utils import random_address, expect_event, padding_left, expect_event_not_emitted, get_tracker, \
     encode_args_with_signature
-from .common import register_candidate, turn_round, execute_proposal
+from .common import register_candidate, turn_round
 
 MIN_INIT_DELEGATE_VALUE = 0
-POWER_FACTOR = 0
-POWER_BLOCK_FACTOR = 0
+# POWER_FACTOR = 0
+# POWER_BLOCK_FACTOR = 0
 CANDIDATE_REGISTER_MARGIN = 0
 candidate_hub_instance = None
 pledge_agent_instance = None
-btc_light_client_instance = None
+# btc_light_client_instance = None
 required_coin_deposit = 0
 TX_FEE = Web3.toWei(1, 'ether')
 actual_block_reward = 0
 
 
 @pytest.fixture(scope="module", autouse=True)
-def set_up(min_init_delegate_value, pledge_agent, candidate_hub, btc_light_client, validator_set):
+def set_up(min_init_delegate_value, pledge_agent, candidate_hub, validator_set):
     global MIN_INIT_DELEGATE_VALUE
-    global POWER_FACTOR
-    global POWER_BLOCK_FACTOR
+    # global POWER_FACTOR
+    # global POWER_BLOCK_FACTOR
     global CANDIDATE_REGISTER_MARGIN
     global candidate_hub_instance
     global pledge_agent_instance
     global required_coin_deposit
-    global btc_light_client_instance
+    # global btc_light_client_instance
     global actual_block_reward
 
     candidate_hub_instance = candidate_hub
     pledge_agent_instance = pledge_agent
-    btc_light_client_instance = btc_light_client
+    # btc_light_client_instance = btc_light_client
     MIN_INIT_DELEGATE_VALUE = min_init_delegate_value
-    POWER_FACTOR = pledge_agent.powerFactor()
-    POWER_BLOCK_FACTOR = pledge_agent.POWER_BLOCK_FACTOR()
+    # POWER_FACTOR = pledge_agent.powerFactor()
+    # POWER_BLOCK_FACTOR = pledge_agent.POWER_BLOCK_FACTOR()
     CANDIDATE_REGISTER_MARGIN = candidate_hub.requiredMargin()
     required_coin_deposit = pledge_agent.requiredCoinDeposit()
 
@@ -207,52 +207,52 @@ class TestUndelegateCoin:
         pledge_agent.undelegateCoin(operator)
 
 
-class TestUpdateParams:
-    def test_update_power_factor(self, pledge_agent):
-        new_power_factor = 250
-        hex_value = padding_left(Web3.toHex(new_power_factor), 64)
-
-        execute_proposal(
-            pledge_agent.address,
-            0,
-            "updateParam(string,bytes)",
-            encode_abi(['string', 'bytes'], ['powerFactor', Web3.toBytes(hexstr=hex_value)]),
-            "update power factor"
-        )
-
-        # check
-        assert pledge_agent.powerFactor() == new_power_factor
+# class TestUpdateParams:
+#def test_update_power_factor(self, pledge_agent):
+    #     new_power_factor = 250
+    #     hex_value = padding_left(Web3.toHex(new_power_factor), 64)
+    #
+    #     execute_proposal(
+    #         pledge_agent.address,
+    #         0,
+    #         "updateParam(string,bytes)",
+    #         encode_abi(['string', 'bytes'], ['powerFactor', Web3.toBytes(hexstr=hex_value)]),
+    #         "update power factor"
+    #     )
+    #
+    #     # check
+    #     assert pledge_agent.powerFactor() == new_power_factor
 
 
 def test_add_round_reward_success_with_normal_agent(pledge_agent, validator_set):
     agents = accounts[1:4]
     rewards = [1e7, 1e8, 1e8]
     coins = [1e6, 4e6]
-    powers = [2, 5]
+    # powers = [2, 5]
     total_coin = 1e7
-    total_power = 10
+    # total_power = 10
     expect_coin_rewards = [0, 0]
-    expect_power_rewards = [0, 0]
+    # expect_power_rewards = [0, 0]
 
     for i in range(len(coins)):
-        c_score = coins[i] * (total_power + 1)
-        p_score = (total_coin + 1) * powers[i] * POWER_FACTOR // 10000
-        agent_score = c_score + p_score
+        c_score = coins[i]
+        # p_score = (total_coin + 1) * powers[i] * POWER_FACTOR // 10000
+        agent_score = c_score
         expect_coin_rewards[i] = rewards[i] * c_score // agent_score
-        expect_power_rewards[i] = rewards[i] * p_score // agent_score
+        # expect_power_rewards[i] = rewards[i] * p_score // agent_score
 
     __candidate_register(agents[0])
     __candidate_register(agents[1])
-    pledge_agent.setRoundState(total_power, total_coin)
-    pledge_agent.setAgentValidator(agents[0], powers[0], coins[0])
-    pledge_agent.setAgentValidator(agents[1], powers[1], coins[1])
+    pledge_agent.setRoundState( total_coin)
+    pledge_agent.setAgentValidator(agents[0],  coins[0])
+    pledge_agent.setAgentValidator(agents[1],  coins[1])
     tx = validator_set.addRoundRewardMock(agents, rewards)
 
     for i in range(len(coins)):
         expect_event(tx, "roundReward", {
             "agent": agents[i],
             "coinReward": expect_coin_rewards[i],
-            "powerReward": expect_power_rewards[i]
+            # "powerReward": expect_power_rewards[i]
         }, idx=i)
 
 
@@ -260,10 +260,10 @@ def test_add_round_reward_success_with_no_agent(pledge_agent, validator_set):
     agents = accounts[1:4]
     rewards = (1e7, 1e8, 1e8)
     total_coin = 1e7
-    total_power = 10
+    # total_power = 10
     __candidate_register(agents[0])
     __candidate_register(agents[1])
-    pledge_agent.setRoundState(total_power, total_coin)
+    pledge_agent.setRoundState(total_coin)
     tx = validator_set.addRoundRewardMock(agents, rewards)
     expect_event_not_emitted(tx, "roundReward")
 
@@ -291,15 +291,14 @@ def test_get_score_success(candidate_hub, validator_set):
         __candidate_register(agents[i])
         __delegate_coin_success(agents[i], delegators[i], 0, required_coin_deposit + i)
 
-    powers = [0, 0, 0, 3, 5]
+    # powers = [0, 0, 0, 3, 5]
     total_coin = required_coin_deposit * 5 + 1 + 10
-    total_power = POWER_BLOCK_FACTOR * (3 + 5) + 1
-    candidate_hub.getScoreMock(agents, powers)
+    # total_power = POWER_BLOCK_FACTOR * (3 + 5) + 1
+    candidate_hub.getScoreMock(agents)
     scores = candidate_hub.getScores()
     assert len(scores) == 5
     for i in range(5):
-        expected_score = (required_coin_deposit + i) * total_power + total_coin * powers[
-            i] * POWER_BLOCK_FACTOR * POWER_FACTOR // 10000
+        expected_score = total_coin
         assert expected_score == scores[i]
 
 
