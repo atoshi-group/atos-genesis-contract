@@ -85,7 +85,7 @@ contract CandidateHub is ICandidateHub, System {
   event addedMargin(address indexed operateAddr, uint256 margin, uint256 totalMargin);
   event deductedMargin(address indexed operateAddr, uint256 margin, uint256 totalMargin);
   event statusChanged(address indexed operateAddr, uint256 oldStatus, uint256 newStatus);
-  event paramChange(string key, bytes value);
+//  event paramChange(string key, bytes value);
 
   /*********************** init **************************/
   function init() external onlyNotInit {
@@ -162,7 +162,7 @@ contract CandidateHub is ICandidateHub, System {
   /// @dev this method is called by Golang consensus engine at the end of a round
   function turnRound() external onlyCoinbase onlyInit onlyZeroGasPrice {
     // distribute rewards for the about to end round
-    //address[] memory lastCandidates = IValidatorSet(VALIDATOR_CONTRACT_ADDR).distributeReward();
+    address[] memory lastCandidates = IValidatorSet(VALIDATOR_CONTRACT_ADDR).distributeReward();
 
     // update the system round tag; new round starts
     

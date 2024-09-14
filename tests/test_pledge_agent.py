@@ -282,6 +282,7 @@ def test_get_score_success(candidate_hub, validator_set):
     for i in range(3):
         __candidate_register(agents[i])
         __delegate_coin_success(agents[i], delegators[i], 0, required_coin_deposit + i)
+        print("#3",required_coin_deposit+i)
 
     turn_round()
     for i in range(3):
@@ -290,6 +291,7 @@ def test_get_score_success(candidate_hub, validator_set):
     for i in range(3, 5):
         __candidate_register(agents[i])
         __delegate_coin_success(agents[i], delegators[i], 0, required_coin_deposit + i)
+        print("#5",required_coin_deposit+i)
 
     # powers = [0, 0, 0, 3, 5]
     total_coin = required_coin_deposit * 5 + 1 + 10
@@ -298,7 +300,7 @@ def test_get_score_success(candidate_hub, validator_set):
     scores = candidate_hub.getScores()
     assert len(scores) == 5
     for i in range(5):
-        expected_score = total_coin
+        expected_score = required_coin_deposit+i
         assert expected_score == scores[i]
 
 

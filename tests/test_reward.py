@@ -151,8 +151,9 @@ class StateMachine:
                                margin=self.candidate_margin)
             self.__register_candidate(operator)
         turn_round()
-        print("##",type(self.pledge_agent.stateMap(self.pledge_agent.roundTag())))
-        self.__turn_round([], self.pledge_agent.stateMap(self.pledge_agent.roundTag()).dict())
+        print("##",int(self.pledge_agent.stateMap(self.pledge_agent.roundTag())))
+        stat_res={"coin":int(self.pledge_agent.stateMap(self.pledge_agent.roundTag()))}
+        self.__turn_round([], stat_res)
         for consensus in self.validator_set.getValidators():
             validator = self.validator_set.currentValidatorSet(self.validator_set.currentValidatorSetMap(consensus) - 1).dict()
             self.current_validators.append(
