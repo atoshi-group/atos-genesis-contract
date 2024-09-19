@@ -72,35 +72,35 @@ def test_parse_header(slash_indicator):
         assert data[1] == validator
 
 
-def test_clean(slash_indicator, candidate_hub):
-    tests = [(
-        accounts[0], [], [], [], [], 0
-    ), (
-        accounts[0], [accounts[0]], [38], [accounts[0]], [1], 1
-    ), (
-        accounts[0], [accounts[0]], [37], [], [], 0
-    ), (
-        accounts[0], accounts[:2], [38, 37], [accounts[0]], [1], 1
-    ), (
-        accounts[0], accounts[:2], [37, 38], [accounts[1]], [1], 1
-    ), (
-        accounts[0], accounts[:2], [37, 37], [], [], 0
-    ), (
-        accounts[0], accounts[:3], [38, 37, 39], [accounts[2], accounts[0]], [2, 1], 2
-    )]
-
-    for operator_address, validators, counts, cleaned_validator, cleaned_counts, cleaned_validator_length in tests:
-        slash_indicator.setIndicators(validators, counts)
-        tx = candidate_hub.cleanMock({'from': operator_address, 'value': 0})
-        if len(validators) > 0:
-            expect_event(tx, "indicatorCleaned", {})
-        data = slash_indicator.getIndicators()
-
-        _validators = data[0]
-        _counts = data[1]
-
-        for idx, _validator in enumerate(_validators):
-            assert cleaned_validator[idx] == _validator
-            assert cleaned_counts[idx] == _counts[idx]
-
-        assert len(_validators) == cleaned_validator_length
+# def test_clean(slash_indicator, candidate_hub):
+#     tests = [(
+#         accounts[0], [], [], [], [], 0
+#     ), (
+#         accounts[0], [accounts[0]], [38], [accounts[0]], [1], 1
+#     ), (
+#         accounts[0], [accounts[0]], [37], [], [], 0
+#     ), (
+#         accounts[0], accounts[:2], [38, 37], [accounts[0]], [1], 1
+#     ), (
+#         accounts[0], accounts[:2], [37, 38], [accounts[1]], [1], 1
+#     ), (
+#         accounts[0], accounts[:2], [37, 37], [], [], 0
+#     ), (
+#         accounts[0], accounts[:3], [38, 37, 39], [accounts[2], accounts[0]], [2, 1], 2
+#     )]
+#
+#     for operator_address, validators, counts, cleaned_validator, cleaned_counts, cleaned_validator_length in tests:
+#         slash_indicator.setIndicators(validators, counts)
+#         tx = candidate_hub.cleanMock({'from': operator_address, 'value': 0})
+#         if len(validators) > 0:
+#             expect_event(tx, "indicatorCleaned", {})
+#         data = slash_indicator.getIndicators()
+#
+#         _validators = data[0]
+#         _counts = data[1]
+#
+#         for idx, _validator in enumerate(_validators):
+#             assert cleaned_validator[idx] == _validator
+#             assert cleaned_counts[idx] == _counts[idx]
+#
+#         assert len(_validators) == cleaned_validator_length

@@ -164,6 +164,13 @@ contract CandidateHub is ICandidateHub, System {
     // distribute rewards for the about to end round
     address[] memory lastCandidates = IValidatorSet(VALIDATOR_CONTRACT_ADDR).distributeReward();
 
+    // fetch candidates who delegated hash power in the about to end round;
+    // and distribute rewards to them
+    uint256 lastCandidateSize = lastCandidates.length;
+    for (uint256 i = 0; i < lastCandidateSize; i++) {
+      IPledgeAgent(PLEDGE_AGENT_ADDR).distributeStakingReward(lastCandidates[i]);
+    }
+
     // update the system round tag; new round starts
     {%if mock %}
     if (controlRoundTimeTag == false) {

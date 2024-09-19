@@ -204,6 +204,45 @@ contract PledgeAgent is IPledgeAgent, System {
     }
   }
 
+  /// Distribute rewards for delegated hash power on one validator candidate
+  /// This method is called at the beginning of `turn round` workflow
+  /// @param candidate The operator address of the validator candidate
+  function distributeStakingReward(address candidate) external override onlyCandidate {
+    // distribute rewards to every miner
+    // note that the miners are represented in the form of reward addresses
+    // and they can be duplicated because everytime a miner delegates a BTC block
+    // to a validator on Core blockchain, a new record is added in BTCLightClient
+    Agent storage a = agentsMap[candidate];
+    uint256 l = a.rewardSet.length;
+    if (l == 0) {
+      return;
+    }
+    Reward storage r = a.rewardSet[l-1];
+    if (r.totalReward == 0 || r.round != roundTag) {
+      return;
+    }
+    RoundState storage rs = stateMap[roundTag];
+    uint256 reward = rs.coin * r.totalReward / r.score;
+
+    uint256 undelegateCoinReward;
+    if (a.coin > r.coin) {
+      // undelegatedCoin = a.coin - r.coin
+      undelegateCoinReward = r.totalReward * (a.coin - r.coin) / r.score;
+    }
+    uint256 remainReward = r.remainReward;
+    require(remainReward >= undelegateCoinReward, "there is not enough reward");
+
+    if (r.coin == 0) {
+      delete a.rewardSet[l-1];
+      undelegateCoinReward = remainReward;
+    } else if (undelegateCoinReward != 0) {
+      r.remainReward -= (undelegateCoinReward);
+    }
+
+    if (undelegateCoinReward != 0) {
+      ISystemReward(SYSTEM_REWARD_ADDR).receiveRewards{ value: undelegateCoinReward }();
+    }
+  }
 
 
   function onFelony(address agent) external override onlyValidator {
