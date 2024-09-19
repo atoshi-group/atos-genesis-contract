@@ -19,6 +19,13 @@ This repo holds all the genesis contracts on Core blockchain, which are part of 
 Install dependency:
 ```shell script
 npm install
+npm install -g ganache
+
+pip3 install solc-select 
+#If not available, add environment variables：export PATH=$PATH:~/.local/bin/
+solc-select install 0.8.4
+solc-select use 0.8.4
+
 ```
 
 
@@ -27,7 +34,12 @@ npm install
 
 ```shell
 # install test dependency
-pip install -r requirements.txt
+pip install -r requirements.txt 
+#If not available, use: 
+#python -m venv <environment_name> 
+source myenv/bin/activate
+
+
 
 # generate contracts for testing
 ./generate-test-contracts.sh
@@ -35,15 +47,6 @@ pip install -r requirements.txt
 # run brownie tests
 brownie test -v --stateful false
 ```
-
-
-
-Flatten all system contracts:
-
-```shell script
-npm run flatten
-```
-
 
 
 ## Generate genesis.json
