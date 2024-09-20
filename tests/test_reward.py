@@ -138,7 +138,7 @@ class StateMachine:
         self.current_validators: [Validator] = []
         self.round_state = RoundState()
         self.delegator_unclaimed_agents_map = defaultdict(set)
-        self.miners = []
+        # self.miners = []
         self.slash_counter: Dict[str, int] = defaultdict(int)
         self.consensus2operator = {}
         self.agent_reward_records: Dict[str, List[AgentReward]] = defaultdict(list)  # key is agent operator address
@@ -167,14 +167,14 @@ class StateMachine:
             self.consensus2operator[validator['consensusAddress']] = validator['operateAddress']
             print(f"\t{validator['operateAddress']}")
 
-    def initialize(self):
-        print(f"{'@' * 47} initialize start {'@' * 47}")
-        # choice 10 miners
-        miners = random.sample(accounts[1:-1], 10)
-        for miner in miners:
-            print(f"miner: {miner}")
-        self.miners.extend(miners)
-        print(f"{'@' * 48} initialize end {'@' * 48}")
+    # def initialize(self):
+    #     print(f"{'@' * 47} initialize start {'@' * 47}")
+    #     # choice 10 miners
+    #     miners = random.sample(accounts[1:-1], 10)
+    #     for miner in miners:
+    #         print(f"miner: {miner}")
+    #     self.miners.extend(miners)
+    #     print(f"{'@' * 48} initialize end {'@' * 48}")
 
     def rule_register_candidate(self):
         operator = random.choice(accounts[:-1])
@@ -288,7 +288,8 @@ class StateMachine:
         tx: TransactionReceipt = turn_round()
         print("events in turn round transaction: --------------")
         self.__parse_event(tx)
-        round_state = self.pledge_agent.stateMap(self.pledge_agent.roundTag()).dict()
+        stat_res={"coin":int(self.pledge_agent.stateMap(self.pledge_agent.roundTag()))}
+        round_state = stat_res
         print(f"Round State(read from contract): coin => {round_state['coin']}")
         # self.__log_agents_power_info()
         self.__turn_round(valid_candidates, round_state)
