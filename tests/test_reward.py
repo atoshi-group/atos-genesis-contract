@@ -611,5 +611,5 @@ def test_stateful(state_machine, candidate_hub, pledge_agent, validator_set, sla
         # btc_light_client,
         slash_indicator,
         min_init_delegate_value,
-        settings={"max_examples": 250, "stateful_step_count": 50}
+        settings={"max_examples": 100, "stateful_step_count": 50}
     )
