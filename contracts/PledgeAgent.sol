@@ -20,7 +20,7 @@ import "./System.sol";
 /// which are eligible for claiming rewards in the acting round
 
 contract PledgeAgent is IPledgeAgent, System {
-  uint256 public constant INIT_REQUIRED_COIN_DEPOSIT = 1e18;
+  uint256 public constant INIT_REQUIRED_COIN_DEPOSIT = 5e23;
 
   uint256 public requiredCoinDeposit;
 
@@ -91,7 +91,7 @@ contract PledgeAgent is IPledgeAgent, System {
   }
 
   /*********************** events **************************/
-  event paramChange(string key, bytes value);
+  //event paramChange(string key, bytes value);
   event delegatedCoin(address indexed agent, address indexed delegator, uint256 amount, uint256 totalAmount);
   event undelegatedCoin(address indexed agent, address indexed delegator, uint256 amount);
   event transferredCoin(

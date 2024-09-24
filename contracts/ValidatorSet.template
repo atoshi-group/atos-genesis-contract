@@ -17,7 +17,7 @@ contract ValidatorSet is IValidatorSet, System {
   using RLPDecode for RLPDecode.Iterator;
   using RLPDecode for RLPDecode.RLPItem;
 
-  uint256 public constant BLOCK_REWARD = 3e18;
+  uint256 public constant BLOCK_REWARD = 1428571e18;
   uint256 public constant BLOCK_REWARD_INCENTIVE_PERCENT = 10;
   uint256 public constant REDUCE_FACTOR = 9639;
   uint256 public {% if not mock %}constant{% endif %} SUBSIDY_REDUCE_INTERVAL = 10512000;
@@ -61,7 +61,7 @@ contract ValidatorSet is IValidatorSet, System {
   event validatorDeposit(address indexed validator, uint256 amount);
   event validatorMisdemeanor(address indexed validator, uint256 amount);
   event validatorFelony(address indexed validator, uint256 amount);
-  event paramChange(string key, bytes value);
+  //event paramChange(string key, bytes value);
   event received(address indexed from, uint256 amount);
 
   /*********************** init **************************/

@@ -15,10 +15,10 @@ import "./lib/Address.sol";
 /// It also exposes the method `turnRound` for the consensus engine to execute the `turn round` workflow
 contract CandidateHub is ICandidateHub, System {
 
-  uint256 public constant INIT_REQUIRED_MARGIN = 1e22;
-  uint256 public constant INIT_DUES = 1e20;
+  uint256 public constant INIT_REQUIRED_MARGIN = 5e27;
+  uint256 public constant INIT_DUES = 5e25;
   uint256 public constant INIT_ROUND_INTERVAL = 86400;
-  uint256 public constant INIT_VALIDATOR_COUNT = 5;
+  uint256 public constant INIT_VALIDATOR_COUNT = 7;
   uint256 public constant MAX_COMMISSION_CHANGE = 10;
   uint256 public constant CANDIDATE_COUNT_LIMIT = 1000;
 
@@ -59,8 +59,6 @@ contract CandidateHub is ICandidateHub, System {
 
   uint256 public roundTag;
   
-  bool public controlRoundTimeTag = false;
-  
 
   struct Candidate {
     address operateAddr;
@@ -85,7 +83,7 @@ contract CandidateHub is ICandidateHub, System {
   event addedMargin(address indexed operateAddr, uint256 margin, uint256 totalMargin);
   event deductedMargin(address indexed operateAddr, uint256 margin, uint256 totalMargin);
   event statusChanged(address indexed operateAddr, uint256 oldStatus, uint256 newStatus);
-//  event paramChange(string key, bytes value);
+  //event paramChange(string key, bytes value);
 
   /*********************** init **************************/
   function init() external onlyNotInit {
@@ -96,10 +94,6 @@ contract CandidateHub is ICandidateHub, System {
     maxCommissionChange = MAX_COMMISSION_CHANGE;
     roundTag = 7;
     alreadyInit = true;
-  }
-  
-  function setControlRoundTimeTag(bool value) external {
-    controlRoundTimeTag = value;
   }
   
   /********************* ICandidateHub interface ****************************/
@@ -173,15 +167,9 @@ contract CandidateHub is ICandidateHub, System {
 
     // update the system round tag; new round starts
     
-    if (controlRoundTimeTag == false) {
-    
     uint256 roundTimestamp = block.timestamp / roundInterval;
     require(roundTimestamp > roundTag, "not allowed to turn round, wait for more time");
     roundTag = roundTimestamp;
-    
-    } else {
-        roundTag++;
-    }
     
 
     // reset validator flags for all candidates.

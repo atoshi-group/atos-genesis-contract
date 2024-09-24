@@ -21,9 +21,9 @@ contract SlashIndicator is ISlashIndicator,System{
   uint256 public constant MISDEMEANOR_THRESHOLD = 50;
   uint256 public constant FELONY_THRESHOLD = 150;
   uint256 public constant DECREASE_RATE = 4;
-  uint256 public constant INIT_REWARD_FOR_REPORT_DOUBLE_SIGN = 5e20;
-  uint32 public constant CHAINID = 1112;
-  uint256 public constant INIT_FELONY_DEPOSIT = 1e21;
+  uint256 public constant INIT_REWARD_FOR_REPORT_DOUBLE_SIGN = 25e25;
+  uint32 public constant CHAINID = 1167;
+  uint256 public constant INIT_FELONY_DEPOSIT = 5e26;
   uint256 public constant INIT_FELONY_ROUND = 2;
   uint256 public constant INFINITY_ROUND = 0xFFFFFFFFFFFFFFFF;
 
@@ -54,7 +54,7 @@ contract SlashIndicator is ISlashIndicator,System{
   /*********************** events **************************/
   event validatorSlashed(address indexed validator);
   event indicatorCleaned();
-  event paramChange(string key, bytes value);
+  //event paramChange(string key, bytes value);
 
   
   function init() external onlyNotInit{

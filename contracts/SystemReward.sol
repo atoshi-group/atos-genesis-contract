@@ -10,9 +10,9 @@ import "./lib/Memory.sol";
 /// This smart contract manages funds for relayers and verifiers
 //contract SystemReward is System, ISystemReward, IParamSubscriber {
 contract SystemReward is System, ISystemReward {
-  uint256 public constant INCENTIVE_BALANCE_CAP = 1e25;
+  // uint256 public constant INCENTIVE_BALANCE_CAP = 1e25;
 
-  uint256 public incentiveBalanceCap;
+  // uint256 public incentiveBalanceCap;
   uint256 public numOperator;
   mapping(address => bool) operators;
 //  bool isBurn;
@@ -22,7 +22,7 @@ contract SystemReward is System, ISystemReward {
 //    operators[LIGHT_CLIENT_ADDR] = true;
     operators[SLASH_CONTRACT_ADDR] = true;
     numOperator = 2;
-    incentiveBalanceCap = INCENTIVE_BALANCE_CAP;
+    // incentiveBalanceCap = INCENTIVE_BALANCE_CAP;
     alreadyInit = true;
   }
 
@@ -35,7 +35,7 @@ contract SystemReward is System, ISystemReward {
   event rewardTo(address indexed to, uint256 amount);
   event rewardEmpty();
   event receiveDeposit(address indexed from, uint256 amount);
-  event paramChange(string key, bytes value);
+  // event paramChange(string key, bytes value);
 
   receive() external payable {
     if (msg.value != 0) {
@@ -46,14 +46,14 @@ contract SystemReward is System, ISystemReward {
   /// Receive funds from system, burn the portion which exceeds cap
   function receiveRewards() external payable override onlyInit {
     if (msg.value != 0) {
-      if (address(this).balance > incentiveBalanceCap) {
+      // if (address(this).balance > incentiveBalanceCap) {
 //        uint256 value = address(this).balance - incentiveBalanceCap;
 //        if (isBurn) {
 //          IBurn(BURN_ADDR).burn{ value: value }();
 //        } else {
 //          payable(FOUNDATION_ADDR).transfer(value);
 //        }
-      }
+      // }
       emit receiveDeposit(msg.sender, msg.value);
     }
   }

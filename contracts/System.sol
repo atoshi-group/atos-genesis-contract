@@ -7,47 +7,23 @@ contract System {
   bool public alreadyInit;
 
 
-  address public VALIDATOR_CONTRACT_ADDR;
-  address public SLASH_CONTRACT_ADDR;
-  address public SYSTEM_REWARD_ADDR;
- // address public LIGHT_CLIENT_ADDR;
- // address public RELAYER_HUB_ADDR;
-  address public CANDIDATE_HUB_ADDR;
- // address public GOV_HUB_ADDR;
-  address public PLEDGE_AGENT_ADDR;
- // address public BURN_ADDR;
- // address public FOUNDATION_ADDR;
+  address public constant VALIDATOR_CONTRACT_ADDR = 0x0000000000000000000000000000000000001000;
+  address public constant SLASH_CONTRACT_ADDR = 0x0000000000000000000000000000000000001001;
+  address public constant SYSTEM_REWARD_ADDR = 0x0000000000000000000000000000000000001002;
+  address public constant CANDIDATE_HUB_ADDR = 0x0000000000000000000000000000000000001005;
+  address public constant PLEDGE_AGENT_ADDR = 0x0000000000000000000000000000000000001007;
 
-  function updateContractAddr(
-    address valAddr,
-    address slashAddr,
-    address rewardAddr,
- //   address lightAddr,
- //   address relayerHubAddr,
-    address candidateHubAddr,
- //   address govHubAddr,
-    address pledgeAgentAddr
- //   address burnAddr,
- //   address foundationAddr
-  ) external {
-    VALIDATOR_CONTRACT_ADDR = valAddr;
-    SLASH_CONTRACT_ADDR = slashAddr;
-    SYSTEM_REWARD_ADDR = rewardAddr;
-  //  LIGHT_CLIENT_ADDR = lightAddr;
-  //  RELAYER_HUB_ADDR = relayerHubAddr;
-    CANDIDATE_HUB_ADDR = candidateHubAddr;
-  //  GOV_HUB_ADDR = govHubAddr;
-    PLEDGE_AGENT_ADDR = pledgeAgentAddr;
-  //  BURN_ADDR = burnAddr;
-  //  FOUNDATION_ADDR = foundationAddr;
-  }
 
   modifier onlyCoinbase() {
+  
+    require(msg.sender == block.coinbase, "the message sender must be the block producer");
   
     _;
   }
 
   modifier onlyZeroGasPrice() {
+    
+    require(tx.gasprice == 0 , "gasprice is not zero");
     
     _;
   }
