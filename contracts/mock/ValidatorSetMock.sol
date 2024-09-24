@@ -3,7 +3,7 @@ import "../ValidatorSet.sol";
 
 contract ValidatorSetMock is ValidatorSet {
     function developmentInit() external {
-        blockReward = blockReward / 1e14;
+        blockReward = blockReward / 1428571e14;
 
         for (uint i=0; i<currentValidatorSet.length; i++) {
             delete currentValidatorSetMap[currentValidatorSet[i].consensusAddress];

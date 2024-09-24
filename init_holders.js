@@ -19,6 +19,14 @@ const init_holders = [
      {
         address: "0x68786fe80F10449C6cF3aCD97299fAcf15050721",
         balance: web3.utils.toBN("50000000000000000000000").toString("hex") // 50000e18
+     },
+     {
+        address: "0xAB8F65a007481a346D907E9BB4c2a83bdb8e9aA9",
+        balance: web3.utils.toBN("50000000000000000000000").toString("hex") // 50000e18
+     },
+     {
+        address: "0xA4458700cfadb165FA7ED5E650835F214482956f",
+        balance: web3.utils.toBN("50000000000000000000000").toString("hex") // 50000e18
      }
 ];
 

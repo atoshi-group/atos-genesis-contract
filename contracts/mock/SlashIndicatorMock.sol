@@ -8,8 +8,8 @@ contract SlashIndicatorMock is SlashIndicator {
     using RLPDecode for RLPDecode.RLPItem;
 
     function developmentInit() external {
-        rewardForReportDoubleSign = rewardForReportDoubleSign / 1e16;
-        felonyDeposit = felonyDeposit / 1e16;
+        rewardForReportDoubleSign = rewardForReportDoubleSign / 5e21;
+        felonyDeposit = felonyDeposit / 5e21;
         misdemeanorThreshold = 2;
         felonyThreshold = 4;
     }

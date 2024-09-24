@@ -6,7 +6,7 @@ contract PledgeAgentMock is PledgeAgent {
     uint256 public rewardAmountM;
 
     function developmentInit() external {
-        requiredCoinDeposit = requiredCoinDeposit / 1e16;
+        requiredCoinDeposit = requiredCoinDeposit / 5e21;
     }
 
     function setRoundState( uint256 coin) external {

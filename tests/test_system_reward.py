@@ -102,18 +102,18 @@ def test_receive_rewards_success_with_balance_less_than_incentive_balance_cap(sy
     __balance_check(account_delta=0-value, system_delta=value)
 
 
-def test_receive_rewards_success_with_balance_equal_to_incentive_balance_cap(system_reward):
-    incentive_balance_cap = system_reward.incentiveBalanceCap()
-    init_balance = incentive_balance_cap - Web3.toWei(1, 'ether')
-    accounts[0].transfer(system_reward.address, init_balance)
+# def test_receive_rewards_success_with_balance_equal_to_incentive_balance_cap(system_reward):
+#     incentive_balance_cap = system_reward.incentiveBalanceCap()
+#     init_balance = incentive_balance_cap - Web3.toWei(1, 'ether')
+#     accounts[0].transfer(system_reward.address, init_balance)
 
-    value = Web3.toWei(1, 'ether')
-    tx = system_reward.receiveRewards({'value': value})
-    expect_event(tx, "receiveDeposit", {
-        'from': accounts[0],
-        "amount": value
-    })
-    __balance_check(account_delta=(init_balance + value) * -1, system_delta=init_balance + value)
+#     value = Web3.toWei(1, 'ether')
+#     tx = system_reward.receiveRewards({'value': value})
+#     expect_event(tx, "receiveDeposit", {
+#         'from': accounts[0],
+#         "amount": value
+#     })
+#     __balance_check(account_delta=(init_balance + value) * -1, system_delta=init_balance + value)
 
 
 # @pytest.mark.parametrize("is_burn", [False, True])

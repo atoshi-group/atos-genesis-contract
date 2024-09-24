@@ -9,8 +9,8 @@ contract CandidateHubMock is CandidateHub {
 
     function developmentInit() external {
         roundInterval = 1;
-        requiredMargin = requiredMargin / 1e16;
-        dues = dues / 1e16;
+        requiredMargin = requiredMargin / 5e21;
+        dues = dues / 5e21;
         maxCommissionChange = 100;
         roundTag = 7;
     }
