@@ -24,6 +24,14 @@ const validators = [
      "consensusAddr": "0x68786fe80F10449C6cF3aCD97299fAcf15050721",
      "feeAddr": "0x68786fe80F10449C6cF3aCD97299fAcf15050721",
    },
+   {
+    "consensusAddr": "0xAB8F65a007481a346D907E9BB4c2a83bdb8e9aA9",
+    "feeAddr": "0xAB8F65a007481a346D907E9BB4c2a83bdb8e9aA9",
+    },
+    {
+    "consensusAddr": "0xA4458700cfadb165FA7ED5E650835F214482956f",
+    "feeAddr": "0xA4458700cfadb165FA7ED5E650835F214482956f",
+    },
 ];
 
 // ===============  Do not edit below ====
